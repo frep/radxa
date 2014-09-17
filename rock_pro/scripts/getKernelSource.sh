@@ -36,7 +36,7 @@ function getKernel {
 #check, if kernel-directory already exists
 if [ -d ${kerneldir} ]; then
 	while true; do
-		read -p "Kernel directory already exists. Delete and [r]eexport or [s]kip ?" rs
+		read -p "Kernel directory already exists. Delete and [r]eimport or [s]kip ?" rs
 		case $rs in
 		[Rr]* )	rm -rf ${kerneldir};
 			getKernel;
