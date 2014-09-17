@@ -24,6 +24,19 @@ function getCrossCompiler {
 	#export PATH=${PATH}:${basedir}/gcc-arm-linux-gnueabihf-4.7/bin
 }
 
+function generateInitrd {
+	git clone https://github.com/frep/initrd
+	make -C initrd
+}
+
+function installMkbootimg {
+	git clone https://github.com/frep/rockchip-mkbootimg
+	cd rockchip-mkbootimg
+	make
+	sudo make install
+	cd ..
+}
+
 
 ##########################################################################################################
 # program
@@ -36,6 +49,8 @@ if [ ! -d ${tooldir} ]; then
 fi
 
 cd ${tooldir}
+
+sudo apt-get install build-essential lzop libncurses5-dev libssl-dev lib32stdc++6
 
 # get arm cross-compiler
 if [ -d gcc-arm-linux-gnueabihf-4.7 ]; then
@@ -53,13 +68,39 @@ else
 	getCrossCompiler
 fi
 
+# generate initrd
+if [ -d initrd ]; then
+        while true; do
+                read -p "initrd directory already exists. Delete and [r]eimport or [s]kip ?" rs
+                case $rs in
+                [Rr]* ) rm -rf initrd;
+			rm initrd.img;
+                        generateInitrd;
+                        break;;
+                [Ss]* ) break;;
+                * )     echo "Please answer [r] or [s].";;
+                esac
+        done
+else
+        generateInitrd
+fi
 
-############################################################################
-# To create the boot.img, the mkbootimg is needed
-############################################################################
-#wget http://dl.radxa.com/rock/tools/linux/mkbootimg
-#apt-get -y install lib32stdc++6
-#chmod +x mkbootimg
+# get mkbootimg
+if [ -d rockchip-mkbootimg ]; then
+        while true; do
+                read -p "rockchip-mkbootimg directory already exists. Delete and [r]eimport or [s]kip ?" rs
+                case $rs in
+                [Rr]* ) rm -rf rockchip-mkbootimg;
+                        installMkbootimg;
+                        break;;
+                [Ss]* ) break;;
+                * )     echo "Please answer [r] or [s].";;
+                esac
+        done
+else
+        installMkbootimg
+fi
+
 
 ############################################################################
 # Upgrade tool to flash parameter-linux
