@@ -1,2 +1,4 @@
 # ignore kernel directory
 kernel_rockchip/
+# ignore tools directory
+tools/
