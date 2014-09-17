@@ -21,12 +21,12 @@ export CROSS_COMPILE=arm-linux-gnueabihf-
 
 function getCrossCompiler {
 	git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7
-	#export PATH=${PATH}:${basedir}/gcc-arm-linux-gnueabihf-4.7/bin
 }
 
 function generateInitrd {
 	git clone https://github.com/frep/initrd
 	make -C initrd
+	mv initrd.img initrd/
 }
 
 function installMkbootimg {
@@ -74,7 +74,6 @@ if [ -d initrd ]; then
                 read -p "initrd directory already exists. Delete and [r]eimport or [s]kip ?" rs
                 case $rs in
                 [Rr]* ) rm -rf initrd;
-			rm initrd.img;
                         generateInitrd;
                         break;;
                 [Ss]* ) break;;

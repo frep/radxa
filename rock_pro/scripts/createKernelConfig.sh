@@ -43,6 +43,11 @@ function createAndModify {
 # program
 ##########################################################################################################
 
+if [ ! -d ${kerneldir} ]; then
+	echo "Kernel sources are needed to create kernel config. Run <getKernelSource.sh> first!"
+	exit
+fi
+
 cd ${kerneldir}
 
 if [ -f .config ]; then
