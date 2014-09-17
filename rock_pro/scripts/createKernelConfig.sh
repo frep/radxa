@@ -1,0 +1,63 @@
+#!/bin/bash
+
+##########################################################################################################
+# Paths and variables
+##########################################################################################################
+
+export ARCH=arm
+export CROSS_COMPILE=arm-linux-gnueabihf-
+
+scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd ${scriptdir}
+cd ..
+basedir=$(pwd)
+kerneldir=${basedir}/kernel_rockchip
+
+
+##########################################################################################################
+# Functions
+##########################################################################################################
+
+function createConfig {
+	make radxa_rock_pro_linux_defconfig
+}
+
+function modifyConfig {
+	make menuconfig
+}
+
+function createAndModify {
+	createConfig
+        while true; do
+                read -p "Kernel config created. [m]odify or [s]kip ?" ms
+                case $ms in
+                [Mm]* ) modifyConfig;
+                        exit;;
+                [Ss]* ) exit;;
+                * )     echo "Please answer [m] or [s].";;
+                esac
+        done
+}
+
+##########################################################################################################
+# program
+##########################################################################################################
+
+cd ${kerneldir}
+
+if [ -f .config ]; then
+        while true; do
+                read -p "Kernel config already exists. Delete and [r]ecreate or [s]kip ?" rs
+                case $rs in
+                [Rr]* ) rm .config;
+                        createAndModify;
+                        exit;;
+                [Ss]* ) exit;;
+                * )     echo "Please answer [r] or [s].";;
+                esac
+        done
+fi
+
+createAndModify
+
+exit
