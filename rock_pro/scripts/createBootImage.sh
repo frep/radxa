@@ -44,6 +44,23 @@ if [ ! -f .config ]; then
         exit
 fi
 
+if [ -f boot.img ]; then
+        while true; do
+                read -p "Boot-image already created. [r]ecreate or [s]kip ?" rs
+                case $rs in
+                [Rr]* ) rm -rf modules;
+			rm boot.img;
+			rm arch/arm/boot/Image;
+			rm arch/arm/boot/zImage;
+                        break;;
+                [Ss]* ) exit;;
+                * )     echo "Please answer [r] or [s].";;
+                esac
+        done
+
+fi
+
+
 buildKernelAndModules
 
 # Create boot.img
