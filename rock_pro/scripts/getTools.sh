@@ -37,6 +37,11 @@ function installMkbootimg {
 	cd ..
 }
 
+function installRkflashtool {
+	git clone https://github.com/frep/rkflashtool
+	cd rkflashtool
+	make
+}
 
 ##########################################################################################################
 # program
@@ -50,7 +55,7 @@ fi
 
 cd ${tooldir}
 
-sudo apt-get install build-essential lzop libncurses5-dev libssl-dev lib32stdc++6
+sudo apt-get install build-essential lzop libncurses5-dev libssl-dev lib32stdc++6 libusb-1.0
 
 # get arm cross-compiler
 if [ -d gcc-arm-linux-gnueabihf-4.7 ]; then
@@ -98,6 +103,22 @@ if [ -d rockchip-mkbootimg ]; then
         done
 else
         installMkbootimg
+fi
+
+# install rkflashtool
+if [ -d rkflashtool ]; then
+        while true; do
+                read -p "rkflashtool directory already exists. Delete and [r]eimport or [s]kip ?" rs
+                case $rs in
+                [Rr]* ) rm -rf rkflashtool;
+                        installRkflashtool;
+                        break;;
+                [Ss]* ) break;;
+                * )     echo "Please answer [r] or [s].";;
+                esac
+        done
+else
+        installRkflashtool
 fi
 
 
