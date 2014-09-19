@@ -41,6 +41,7 @@ function installRkflashtool {
 	git clone https://github.com/frep/rkflashtool
 	cd rkflashtool
 	make
+	cd ..
 }
 
 ##########################################################################################################
