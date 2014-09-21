@@ -12,3 +12,6 @@ Steps to create an image:
 
 4. create the boot image:
    `createBootImage.sh`
+
+4. create a rootfs image:
+   `createKaliRootfs.sh`

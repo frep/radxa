@@ -2,3 +2,5 @@
 kernel_rockchip/
 # ignore tools directory
 tools/
+# ignore images directory
+images/
