@@ -12,6 +12,8 @@ Steps to create an image:
 
 4. create the boot image:
    `createBootImage.sh`
+   Actually, my self-compiled kernel is not working. I'm using the the boot-image extracted from the
+   ubuntu-Image. If you have any hint, why self-created image is not working, please let me know!
 
 4. create a rootfs image:
    `createKaliRootfs.sh`
