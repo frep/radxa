@@ -1,4 +1,4 @@
 radxa
 =====
 
-workspace for radxa devices, such as the radxa rock pro
+workspace for [radxa](http://radxa.com/) devices, such as the radxa rock pro
