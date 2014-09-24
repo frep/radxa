@@ -25,3 +25,7 @@ Put kernelmodules (and firmware) in your rootfs.img.
 Generate a nand-image with the pack-tool using the rootfs.img, the boot-linux.img and the correct parameter-file
 Create a backup from the rootfs and compress it
 Restore a backup to the nand.
+
+Create a partition backup:
+==========================
+To create a backup of a partition, run `makeBackup.sh`

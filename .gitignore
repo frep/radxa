@@ -4,3 +4,5 @@ kernel_rockchip/
 tools/
 # ignore images directory
 images/
+# ignore backup directory
+backups/
