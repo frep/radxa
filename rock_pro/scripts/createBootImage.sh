@@ -44,12 +44,12 @@ if [ ! -f .config ]; then
         exit
 fi
 
-if [ -f boot.img ]; then
+if [ -f boot-linux.img ]; then
         while true; do
                 read -p "Boot-image already created. [r]ecreate or [s]kip ?" rs
                 case $rs in
                 [Rr]* ) rm -rf modules;
-			rm boot.img;
+			rm boot-linux.img;
 			rm arch/arm/boot/Image;
 			rm arch/arm/boot/zImage;
                         break;;
@@ -63,8 +63,8 @@ fi
 
 buildKernelAndModules
 
-# Create boot.img
-mkbootimg --kernel ${kerneldir}/arch/arm/boot/Image --ramdisk ${tooldir}/initrd/initrd.img -o boot.img
+# Create boot-linux.img
+mkbootimg --kernel ${kerneldir}/arch/arm/boot/Image --ramdisk ${tooldir}/initrd/initrd.img -o boot-linux.img
 
 
 exit
