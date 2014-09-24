@@ -1,5 +1,5 @@
-Steps to create an image:
-=========================
+Steps to create an kali-image:
+==============================
 
 1. get the needed tools: 
    `getTools.sh`
@@ -17,3 +17,11 @@ Steps to create an image:
 
 4. create a rootfs image:
    `createKaliRootfs.sh`
+
+Missing steps:
+--------------
+
+Put kernelmodules (and firmware) in your rootfs.img.
+Generate a nand-image with the pack-tool using the rootfs.img, the boot-linux.img and the correct parameter-file
+Create a backup from the rootfs and compress it
+Restore a backup to the nand.
