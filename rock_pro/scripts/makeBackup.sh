@@ -14,7 +14,6 @@ backupdir=${basedir}/backups
 
 export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
-export PATH=${PATH}:${tooldir}/rkflashtool
 
 today=$(date +"%Y_%m_%d")
 
@@ -45,21 +44,28 @@ while true; do
         esac
 done
 
+# TODO: Read offset and size of partitions out of the device
+
 while true; do
         read -p "Back up which partition? [b]oot, [l]inuxroot, [n]one of them!" bln
         case $bln in
         [Bb]* ) partition="boot";
+		offset=0x2000;
+		size=0x8000;
 		break;;
         [Ll]* ) partition="linuxroot";
+		offset=0xA000;
+		size=0xFF6000;
 		break;;
 	[Nn]* ) exit;;
         * )     echo "Choose [b]oot, [l]inuxroot, or [n] to exit";;
         esac
 done
 
+cd ${tooldir}/rkflashtool
 backupname=${partition}_${today}.img
 echo "Create backup: ${backupname}"
-./rkflashtool r ${partition} > ${backupname}
+./rkflashtool r ${offset} ${size} > ${backupdir}/${backupname}
 
 # compress the backup for the linuxroot partition
 if [ "${partition}" == "linuxroot" ]; then
