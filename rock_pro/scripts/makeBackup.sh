@@ -16,7 +16,9 @@ export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
 
 today=$(date +"%Y_%m_%d")
-
+partition=""
+offset=""
+size=""
 
 ##########################################################################################################
 # functions
@@ -28,7 +30,49 @@ function getParameterFile {
 }
 
 function readPartitionData {
-	# ToDo
+        cd ${tooldir}/rkflashtool
+        ./rkflashtool p > tempParam.txt
+	partitioninfo=$(cat tempParam.txt | grep -o -e "0x[0-9a-fA-F]\{8\}\@0x[0-9a-fA-F]\{8\}("$1")" -e "-@0x[0-9a-fA-F]\{8\}$
+	offset=$(echo "${partitioninfo}" | grep -o "0x[0-9a-fA-F]\{8\}(" | grep -o "0x[0-9a-fA-F]\{8\}")
+	size=$(echo "${partitioninfo}" | grep -o ".*\@" | grep -o -e "-" -e "0x[0-9a-fA-F]\{8\}")
+	if [ "${size}" == "-" ]; then
+		# 0x1000000 is the number of 512bytes-blocks of a 8-GB memory
+        	sizeAsInt=$((0x1000000 - ${offset}))
+        	size=$(printf 0x%X ${sizeAsInt})
+	fi
+}
+
+function backupPartition {
+	cd ${tooldir}/rkflashtool
+	backupname=${partition}_${today}.img
+	echo "Create backup: ${backupname}"
+	./rkflashtool r ${offset} ${size} > ${backupdir}/${backupname}
+}
+
+function compressPartition {
+	cd ${backupdir}
+	# compress the backup for the linuxroot partition
+	if [ "${partition}" == "linuxroot" ]; then
+	echo "Compress backup"
+	pixz ${backupname} ${backupname}.xz
+	sha1sum ${backupname}.xz > ${backupname}.xz.sha1sum
+
+	while true; do
+        	read -p "Keep the uncompressed backup? [k]eep or [d]elete" kd
+        	case $kd in
+        	[Kk]* ) break;;
+        	[Dd]* ) rm ${backupname};
+                	break;;
+        	* )     echo "Choose [k]eep or [d]elete";;
+        	esac
+	done
+fi
+
+}
+
+function cleanup {
+        cd ${tooldir}/rkflashtool
+        rm -f tempParam.txt
 }
 
 
@@ -48,8 +92,6 @@ if [ ! -f ${tooldir}/rkflashtool/rkflashtool ]; then
 	exit
 fi
 
-cd ${backupdir}
-
 while true; do
 	read -p "Is radxa connected in loader mode? [y]es, let's go, or [n]o, abort backup!" yn
       	case $yn in
@@ -59,48 +101,26 @@ while true; do
         esac
 done
 
-getParameterFile
-
 while true; do
-        read -p "Back up which partition? [b]oot, [l]inuxroot, [n]one of them!" bln
-        case $bln in
+        read -p "Back up which partition? [b]oot, [l]inuxroot, [p]aramter, [n]one of them!" blpn
+        case $blpn in
         [Bb]* ) partition="boot";
-		offset=0x2000;
-		size=0x8000;
 		break;;
         [Ll]* ) partition="linuxroot";
-		offset=0xA000;
-		size=0xFF6000;
 		break;;
+	[Pp]* ) getParameterFile;
+		exit;;
 	[Nn]* ) exit;;
         * )     echo "Choose [b]oot, [l]inuxroot, or [n] to exit";;
         esac
 done
 
-# TODO: Read offset and size of partitions out of the device
-readPartitionData
+readPartitionData ${partition}
 
-cd ${tooldir}/rkflashtool
-backupname=${partition}_${today}.img
-echo "Create backup: ${backupname}"
-./rkflashtool r ${offset} ${size} > ${backupdir}/${backupname}
+backupPartition
 
-cd ${backupdir}
-# compress the backup for the linuxroot partition
-if [ "${partition}" == "linuxroot" ]; then
-echo "Compress backup"
-pixz ${backupname} ${backupname}.xz
-sha1sum ${backupname}.xz > ${backupname}.xz.sha1sum
+compressPartition
 
-while true; do
-        read -p "Keep the uncompressed backup? [k]eep or [d]elete" kd
-        case $kd in
-        [Kk]* ) break;;
-        [Dd]* ) rm ${backupname};
-		break;;
-        * )     echo "Choose [k]eep or [d]elete";;
-        esac
-done
-fi
+cleanup
 
 exit
