@@ -67,6 +67,7 @@ backupname=${partition}_${today}.img
 echo "Create backup: ${backupname}"
 ./rkflashtool r ${offset} ${size} > ${backupdir}/${backupname}
 
+cd ${backupdir}
 # compress the backup for the linuxroot partition
 if [ "${partition}" == "linuxroot" ]; then
 echo "Compress backup"
