@@ -17,6 +17,21 @@ export CROSS_COMPILE=arm-linux-gnueabihf-
 
 today=$(date +"%Y_%m_%d")
 
+
+##########################################################################################################
+# functions
+##########################################################################################################
+
+function getParameterFile {
+	cd ${tooldir}/rkflashtool
+	./rkflashtool p > ${backupdir}/parameter_${today}
+}
+
+function readPartitionData {
+	# ToDo
+}
+
+
 ##########################################################################################################
 # program
 ##########################################################################################################
@@ -44,7 +59,7 @@ while true; do
         esac
 done
 
-# TODO: Read offset and size of partitions out of the device
+getParameterFile
 
 while true; do
         read -p "Back up which partition? [b]oot, [l]inuxroot, [n]one of them!" bln
@@ -61,6 +76,9 @@ while true; do
         * )     echo "Choose [b]oot, [l]inuxroot, or [n] to exit";;
         esac
 done
+
+# TODO: Read offset and size of partitions out of the device
+readPartitionData
 
 cd ${tooldir}/rkflashtool
 backupname=${partition}_${today}.img
