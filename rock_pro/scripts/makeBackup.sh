@@ -16,9 +16,9 @@ export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
 
 today=$(date +"%Y_%m_%d")
-partition=""
-offset=""
-size=""
+partition=" "
+offset=" "
+size=" "
 
 ##########################################################################################################
 # functions
@@ -32,7 +32,7 @@ function getParameterFile {
 function readPartitionData {
         cd ${tooldir}/rkflashtool
         ./rkflashtool p > tempParam.txt
-	partitioninfo=$(cat tempParam.txt | grep -o -e "0x[0-9a-fA-F]\{8\}\@0x[0-9a-fA-F]\{8\}("$1")" -e "-@0x[0-9a-fA-F]\{8\}$
+	partitioninfo=$(cat tempParam.txt | grep -o -e "0x[0-9a-fA-F]\{8\}\@0x[0-9a-fA-F]\{8\}("$1")" -e "-\@0x[0-9a-fA-F]\{8\}("$1")")
 	offset=$(echo "${partitioninfo}" | grep -o "0x[0-9a-fA-F]\{8\}(" | grep -o "0x[0-9a-fA-F]\{8\}")
 	size=$(echo "${partitioninfo}" | grep -o ".*\@" | grep -o -e "-" -e "0x[0-9a-fA-F]\{8\}")
 	if [ "${size}" == "-" ]; then
@@ -93,8 +93,8 @@ if [ ! -f ${tooldir}/rkflashtool/rkflashtool ]; then
 fi
 
 while true; do
-	read -p "Is radxa connected in loader mode? [y]es, let's go, or [n]o, abort backup!" yn
-      	case $yn in
+	read -p "Is radxa connected in loader mode? [y]es, or [n]o, abort backup!" yn
+	case $yn in
         [Yy]* ) break;;
         [Nn]* ) exit;;
         * )     echo "connect radxa in loader mode and confirm with [y] or abort with [n]o!";;
@@ -102,7 +102,7 @@ while true; do
 done
 
 while true; do
-        read -p "Back up which partition? [b]oot, [l]inuxroot, [p]aramter, [n]one of them!" blpn
+        read -p "Back up which partition? [b]oot, [l]inuxroot, [p]aramter or [n]one of them!" blpn
         case $blpn in
         [Bb]* ) partition="boot";
 		break;;
@@ -111,8 +111,8 @@ while true; do
 	[Pp]* ) getParameterFile;
 		exit;;
 	[Nn]* ) exit;;
-        * )     echo "Choose [b]oot, [l]inuxroot, or [n] to exit";;
-        esac
+	* )     echo "Choose [b]oot [l]inuxroot [p]arameter or [n] to exit";;
+	esac
 done
 
 readPartitionData ${partition}
