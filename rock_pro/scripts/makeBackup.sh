@@ -40,6 +40,7 @@ function readPartitionData {
         	sizeAsInt=$((0x1000000 - ${offset}))
         	size=$(printf 0x%X ${sizeAsInt})
 	fi
+	echo "Partition: offset = ${offset}, size = ${size}"
 }
 
 function backupPartition {
