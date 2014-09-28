@@ -26,13 +26,13 @@ size=" "
 
 function getParameterFile {
 	cd ${tooldir}/rkflashtool
+	# if there is already a backupfile, delete old one first!
+	rm -f parameter_${today}
 	./rkflashtool p > ${backupdir}/parameter_${today}
 }
 
 function readPartitionData {
-        cd ${tooldir}/rkflashtool
-        ./rkflashtool p > tempParam.txt
-	partitioninfo=$(cat tempParam.txt | grep -o -e "0x[0-9a-fA-F]\{8\}\@0x[0-9a-fA-F]\{8\}("$1")" -e "-\@0x[0-9a-fA-F]\{8\}("$1")")
+	partitioninfo=$(cat ${backupdir}/parameter_${today} | grep -o -e "0x[0-9a-fA-F]\{8\}\@0x[0-9a-fA-F]\{8\}("$1")" -e "-\@0x[0-9a-fA-F]\{8\}("$1")")
 	offset=$(echo "${partitioninfo}" | grep -o "0x[0-9a-fA-F]\{8\}(" | grep -o "0x[0-9a-fA-F]\{8\}")
 	size=$(echo "${partitioninfo}" | grep -o ".*\@" | grep -o -e "-" -e "0x[0-9a-fA-F]\{8\}")
 	if [ "${size}" == "-" ]; then
@@ -46,6 +46,9 @@ function readPartitionData {
 function backupPartition {
 	cd ${tooldir}/rkflashtool
 	backupname=${partition}_${today}.img
+	# if there is already a backupfile, delete old one first!
+	rm -f ${backupname}
+	rm -f ${backupname}.xz
 	echo "Create backup: ${backupname}"
 	./rkflashtool r ${offset} ${size} > ${backupdir}/${backupname}
 }
@@ -71,18 +74,13 @@ fi
 
 }
 
-function cleanup {
-        cd ${tooldir}/rkflashtool
-        rm -f tempParam.txt
-}
-
 
 ##########################################################################################################
 # program
 ##########################################################################################################
 
 if [ ! -d ${backupdir} ]; then
-	# backup directory does not exist yet. Create it!
+	# root backup directory does not exist yet. Create it!
 	cd ${basedir}
 	mkdir backups
 fi
@@ -92,6 +90,13 @@ if [ ! -f ${tooldir}/rkflashtool/rkflashtool ]; then
 	echo "rkflashtool not found! run getTools.sh first!"
 	exit
 fi
+
+if [ ! -d ${backupdir}/${today} ]; then
+	# actual backup directory does not exist yet. Create it!
+	cd ${backupdir}
+	mkdir ${today}
+fi
+backupdir=${backupdir}/${today}
 
 while true; do
 	read -p "Is radxa connected in loader mode? [y]es, or [n]o, abort backup!" yn
@@ -103,25 +108,23 @@ while true; do
 done
 
 while true; do
-        read -p "Back up which partition? [b]oot, [l]inuxroot, [p]aramter or [n]one of them!" blpn
-        case $blpn in
+        read -p "Back up which partition? [b]oot, [l]inuxroot or [n]one of them!" bln
+        case $bln in
         [Bb]* ) partition="boot";
 		break;;
         [Ll]* ) partition="linuxroot";
 		break;;
-	[Pp]* ) getParameterFile;
-		exit;;
 	[Nn]* ) exit;;
-	* )     echo "Choose [b]oot [l]inuxroot [p]arameter or [n] to exit";;
+	* )     echo "Choose [b]oot [l]inuxroot or [n] to exit";;
 	esac
 done
+
+getParameterFile
 
 readPartitionData ${partition}
 
 backupPartition
 
 compressPartition
-
-cleanup
 
 exit
