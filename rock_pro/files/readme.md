@@ -1,4 +1,4 @@
 Post-installation
 =================
 
-Files, needed after new installation.
+After installation, run `post-installation.sh` for setting up some basics.
