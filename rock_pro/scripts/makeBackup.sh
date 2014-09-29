@@ -27,7 +27,7 @@ size=" "
 function getParameterFile {
 	cd ${tooldir}/rkflashtool
 	# if there is already a backupfile, delete old one first!
-	rm -f parameter_${today}
+	rm -f ${backupdir}/parameter_${today}
 	./rkflashtool p > ${backupdir}/parameter_${today}
 }
 
@@ -37,10 +37,12 @@ function readPartitionData {
 	size=$(echo "${partitioninfo}" | grep -o ".*\@" | grep -o -e "-" -e "0x[0-9a-fA-F]\{8\}")
 	if [ "${size}" == "-" ]; then
 		# 0x1000000 is the number of 512bytes-blocks of a 8-GB memory
-        	sizeAsInt=$((0x1000000 - ${offset}))
-        	size=$(printf 0x%X ${sizeAsInt})
+        	#sizeAsInt=$((0x1000000 - ${offset}))
+        	#size=$(printf 0x%X ${sizeAsInt})
+		# so much for the math. startup tells me a size of 0xEF0000
+		size=0xEF0000
 	fi
-	echo "Partition: offset = ${offset}, size = ${size}"
+	echo "Partition "$1": offset = ${offset}, size = ${size}"
 }
 
 function backupPartition {
@@ -57,21 +59,20 @@ function compressPartition {
 	cd ${backupdir}
 	# compress the backup for the linuxroot partition
 	if [ "${partition}" == "linuxroot" ]; then
-	echo "Compress backup"
-	pixz ${backupname} ${backupname}.xz
-	sha1sum ${backupname}.xz > ${backupname}.xz.sha1sum
+		echo "Compress backup"
+		pixz ${backupname} ${backupname}.xz
+		sha1sum ${backupname}.xz > ${backupname}.xz.sha1sum
 
-	while true; do
-        	read -p "Keep the uncompressed backup? [k]eep or [d]elete" kd
-        	case $kd in
-        	[Kk]* ) break;;
-        	[Dd]* ) rm ${backupname};
-                	break;;
-        	* )     echo "Choose [k]eep or [d]elete";;
-        	esac
-	done
-fi
-
+		while true; do
+        		read -p "Keep the uncompressed backup? [k]eep or [d]elete" kd
+        		case $kd in
+        		[Kk]* ) break;;
+        		[Dd]* ) rm ${backupname};
+                		break;;
+        		* )     echo "Choose [k]eep or [d]elete";;
+        		esac
+		done
+	fi
 }
 
 
