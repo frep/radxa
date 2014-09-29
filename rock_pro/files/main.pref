@@ -1,0 +1,11 @@
+Package: *
+Pin: release n=kali
+Pin-Priority: 350
+
+Package: *
+Pin: release n=kali-bleeding-edge
+Pin-Priority: 300
+
+Package: *
+Pin: release n=jessie
+Pin-Priority: 10
