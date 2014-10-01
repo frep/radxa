@@ -16,6 +16,7 @@ backupdir=${basedir}/backups
 
 export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
+export PATH=${PATH}:${tooldir}/gcc-arm-linux-gnueabihf-4.7/bin
 
 today=$(date +"%Y_%m_%d")
 partition=" "
