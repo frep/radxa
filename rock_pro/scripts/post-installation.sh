@@ -63,7 +63,7 @@ function installJava {
   update-alternatives --set java /opt/java/jdk1.8.0_06/bin/java
   echo "JAVA_HOME=\"/opt/java/jdk1.8.0_06\"" >> /etc/enviroment
   echo "" >> /root/.bashrc
-  echo "export JAVA_HOME=\"/opt/java/jdk1.8.0\"" >> /root/.bashrc
+  echo "export JAVA_HOME=\"/opt/java/jdk1.8.0_06\"" >> /root/.bashrc
   echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /root/.bashrc
 }
 
