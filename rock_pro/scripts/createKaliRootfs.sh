@@ -21,7 +21,8 @@ export CROSS_COMPILE=arm-linux-gnueabihf-
 ##########################################################################################################
 
 if [[ $# -eq 0 ]] ; then
-    echo "Please pass version number, e.g. $0 1.0.1"
+    	echo "Please pass version number and the kernel-directory"
+	echo "E.g. ./createKaliRootfs.sh 1.0.1 ../kernel/ubuntuImage"
     exit 0
 fi
 
@@ -32,6 +33,7 @@ if [ ! -d ${imagedir} ]; then
 fi
 
 kalidir=${imagedir}/kali-$1
+kerneldir=$2
 
 # Package installations for various sections.
 # This will build a minimal XFCE Kali system with the top 10 tools.
@@ -193,6 +195,7 @@ cat > kali-$architecture/etc/rc.local << "EOF"
 #
 # By default this script does nothing.
 /usr/local/bin/mtd-by-name.sh
+su -l root -c startx
 exit 0
 EOF
 
@@ -227,17 +230,15 @@ rsync -HPavz -q ${kalidir}/kali-$architecture/ ${rootimg}
 # Uncomment this if you use apt-cacher-ng otherwise git clones will fail.
 #unset http_proxy
 
-#mkdir -p ${rootimg}/lib/modules
-#mkdir -p ${rootimg}/lib/firmware
-#cp -r ${kerneldir}/modules/lib/modules/3.0.36 ${rootimg}/lib/modules
-#cp -r ${kerneldir}/firmware/* ${rootimg}/lib/firmware/
+cd ${kerneldir}
+tar xvfz modules.tar.gz -C ${rootimg}/lib
+
+# enable autologin
+cd ${rootimg}/etc
+cat inittab | sed 's@1:2345:respawn:/sbin/getty 38400 tty1@1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>\&1@' > tempFile
+mv tempFile inittab
 
 # Unmount partitions
+cd ${basedir}
 umount ${rootimg}
-
-# Clean up all the temporary build stuff and remove the directories.
-# Comment this out to keep things around if you want to see what may have gone
-# wrong.
-#echo "Cleaning up temporary build system"
-#rm -rf ${basedir}/** ${basedir}/patches ${basedir}/kernel ${basedir}/root ${basedir}/kali-$architecture
 
