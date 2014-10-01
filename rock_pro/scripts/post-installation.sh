@@ -76,7 +76,8 @@ function installArduino {
 }
 
 function fixWiresharkRootProblem {
-  cp -f ${filedir}/init.lua /usr/share/wireshark/init.lua
+  cat /usr/share/wireshark/init.lua | sed 's@disable_lua = false@disable_lua = true@' > tmpFile
+  mv tmpFile /usr/share/wireshark/init.lua
 }
 
 ##########################################################################################################
