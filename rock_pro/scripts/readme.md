@@ -3,25 +3,22 @@ Steps to create an kali-image:
 1. get the needed tools: 
    `./getTools.sh`
 
-2. ~~get the kernel sources:~~
-   ~~`./getKernelSource.sh`~~
-
-3. ~~create kernel config: (and modify it, if you know what you do)~~
-   ~~`./createKernelConfig.sh`~~
-
-4. ~~create the boot image:~~
-   ~~`./createBootImage.sh`~~
-   - [ ] Actually, my self-compiled kernel is not working. I'm using the the boot-image extracted from the
-   ubuntu-Image. If you have any hint, why self-created image is not working, please let me know!
-
-4. create a rootfs image:
-   `./createKaliRootfs.sh <versionNumber>` (e.g. ./createKaliRootfs.sh 1.0.9)
+2. create a Nand-image for radxa rock pro:
+   `./createNandImg.sh <versionNumer>` (e.g. ./createNandImg.sh 1.0.0)
 
 Missing steps:
 --------------
-- [ ] Put kernelmodules (and firmware) in your rootfs.img.
-- [ ] Generate a nand-image with the pack-tool using the rootfs.img, the boot-linux.img and the correct parameter-file.
-- [ ] Choice between image for nand or sd-card
+- [ ] create self-compiled kernel and use it for image
+- [ ] Create image for sd-card
+
+Notes:
+------
+* The script to create a rootfs is based on the work of [manu7irl](https://github.com/manu7irl).
+* The image is modified in such a way that after bootup there is an auto-login as root and startx gets executed due to the fact, that at the moment after bootup, there is no output visible, which is not useable.
+
+Getting started:
+================
+Once the Radxa Rock pro is running with the created image, you can download this workspace and modify the script: `post-installation.sh`. Uncomment all the steps, you want to be executed. Then run it!
 
 Create a partition backup:
 ==========================
