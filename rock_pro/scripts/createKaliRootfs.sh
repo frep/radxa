@@ -20,10 +20,15 @@ export CROSS_COMPILE=arm-linux-gnueabihf-
 # program
 ##########################################################################################################
 
-if [[ $# -eq 0 ]] ; then
+if [[ $# -ne 2 ]] ; then
     	echo "Please pass version number and the kernel-directory"
 	echo "E.g. ./createKaliRootfs.sh 1.0.1 ../kernel/ubuntuImage"
     exit 0
+fi
+
+if [ ! -f $2/modules.tar.gz ]; then
+	echo "modules and firmware archive not found. Check the kernel directory!"
+	exit 0
 fi
 
 cd ${basedir}
