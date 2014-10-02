@@ -28,7 +28,7 @@ function updateAndUpgrade {
 }
 
 function installConky {
-  apt-get install conky
+  apt-get install conky -y
   cp ${filedir}/.conkyrc /root/
 }
 
@@ -102,6 +102,7 @@ function fixWiresharkRootProblem {
 
 #installJava
 
+#fixWiresharkRootProblem
+
 #installArduino
 
-#fixWiresharkRootProblem
