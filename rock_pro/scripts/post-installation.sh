@@ -15,6 +15,10 @@ filedir=${basedir}/files
 # functions
 ##########################################################################################################
 
+function setKeyboardlayout {
+  dpkg-reconfigure keyboard-configuration
+}
+
 function setTimezone {
   dpkg-reconfigure tzdata
 }
@@ -67,6 +71,16 @@ function installJava {
   echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /root/.bashrc
 }
 
+function installMaven {
+  mkdir -p -v /opt/maven
+  tar xvzf ${filedir}/apache-maven-3.2.3-bin.tar.gz -C /opt/maven
+  echo "" >> /root/.bashrc
+  echo "export M2_HOME=\"/opt/maven/apache-maven-3.2.3\"" >> /root/.bashrc
+  echo "export M2=\$M2_HOME/bin" >> /root/.bashrc
+  echo "export PATH=\$PATH:\$M2" >> /root/.bashrc
+
+}
+
 function installArduino {
   apt-get install arduino -y
   mkdir -p /lib/modules/3.0.36+/kernel/drivers/usb/class
@@ -83,6 +97,8 @@ function fixWiresharkRootProblem {
 ##########################################################################################################
 # program
 ##########################################################################################################
+
+#setKeyboardlayout
 
 #setTimezone
 
@@ -101,6 +117,8 @@ function fixWiresharkRootProblem {
 #installChromium
 
 #installJava
+
+#installMaven
 
 #fixWiresharkRootProblem
 
