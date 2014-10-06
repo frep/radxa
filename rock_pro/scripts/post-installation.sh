@@ -28,7 +28,7 @@ function resizeRootfs {
 }
 
 function updateAndUpgrade {
-  apt-get update && apt-get upgrade -y
+  apt-get clean && apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 }
 
 function installConky {
