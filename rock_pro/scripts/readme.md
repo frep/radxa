@@ -18,7 +18,9 @@ Notes:
 
 Getting started:
 ================
-Once the Radxa Rock pro is running with the created image, you can download this workspace and modify the script: `post-installation.sh`. Uncomment all the steps, you want to be executed. Then run it!
+The first thing you may want to do after the image is running, is to resize the Rootfs to use the whole nand:
+`resize2fs /dev/block/mtd/by-name/linuxroot`
+Once this is done, you can download this workspace and modify the script: `post-installation.sh`. Uncomment all the steps, you want to be executed. Then run it!
 
 Create a partition backup:
 ==========================
