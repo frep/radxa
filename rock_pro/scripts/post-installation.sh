@@ -116,6 +116,11 @@ function fixSshService {
   update-rc.d ssh defaults
 }
 
+function replaceNetworkManagerWithWicd {
+  apt-get remove network-manager -y
+  apt-get install wicd -y
+}
+
 ##########################################################################################################
 # program
 ##########################################################################################################
@@ -147,5 +152,7 @@ function fixSshService {
 #fixWiresharkRootProblem
 
 #fixSshService
+
+#replaceNetworkManagerWithWicd
 
 #installArduino

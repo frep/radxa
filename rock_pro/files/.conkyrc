@@ -82,7 +82,7 @@ template3 ${color1}\1 ${color2}\2
 TEXT
 ${template1 SYSTEM\ INFORMATION}
 ${color1}Hostname: ${color2}$nodename \
-  ${color1}Kernel:  ${color2}$kernel        
+  ${color1}Kernel: ${color2}$kernel         
 ${color1}Uptime: ${color2}$uptime_short ${alignr}${color1}Time: ${color2}${time %Y-%m-%d %H:%M}
 
 ${template1 CPU\ AND\ PROCESSES}
