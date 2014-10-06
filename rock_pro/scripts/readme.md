@@ -10,6 +10,9 @@ Missing steps:
 --------------
 - [ ] create self-compiled kernel and use it for image
 - [ ] Create image for sd-card
+- [ ] buildRootfs: add launchAtStartX 
+- [ ] buildRootfs: modify source.list and add main.pref
+- [ ] buildRootfs: automatic resizeRootfs at first bootup
 
 Notes:
 ------
@@ -21,6 +24,15 @@ Getting started:
 The first thing you may want to do after the image is running, is to resize the Rootfs to use the whole nand:
 `resize2fs /dev/block/mtd/by-name/linuxroot`
 Once this is done, you can download this workspace and modify the script: `post-installation.sh`. Uncomment all the steps, you want to be executed. Then run it!
+
+Missing steps:
+--------------
+- [ ] fixSshService
+- [ ] installRuby
+- [ ] replaceNetworkManagerWithWicd
+- [ ] try karaf 3.0.2-snapshot (or 2.4.0) -> due to java8 support
+- [ ] test bluetooth
+- [ ] When buildRootfs steps are done, adjust post-installation accordingly.
 
 Create a partition backup:
 ==========================
