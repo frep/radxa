@@ -27,7 +27,6 @@ Once this is done, you can download this workspace and modify the script: `post-
 
 Missing steps:
 --------------
-- [ ] post-installation: fixSshService
 - [ ] post-installation: installRuby
 - [ ] post-installation: replaceNetworkManagerWithWicd
 - [ ] try karaf 3.0.2-snapshot (or 2.4.0) -> due to java8 support
