@@ -81,6 +81,20 @@ function installMaven {
 
 }
 
+function installRuby {
+  apt-get install curl -y
+  curl -L https://get.rvm.io | bash -s stable
+  source /usr/local/rvm/bin/rvm
+  apt-get install libc6-dev -t testing -y
+  rvm requirements
+  rvm install ruby
+  echo "check ruby installation with rvm list"
+  echo "if installed ruby is not set, open a new terminal and type:"
+  echo "rvm use ruby-2.1.3 --default"
+  mkdir /root/Documents/ruby
+  cp ${filedir}/helloWorld.rb /root/Documents/ruby/
+}
+
 function installArduino {
   apt-get install arduino -y
   mkdir -p /lib/modules/3.0.36+/kernel/drivers/usb/class
@@ -95,9 +109,9 @@ function fixWiresharkRootProblem {
 }
 
 function fixSshService {
-  #cat /etc/init.d/ssh | sed 's@# Default-Stop:@# Default-Stop:         0 1 6@' > tmpFile
-  #mv tmpFile /etc/init.d/ssh
-  #chmod +x /etc/init.d/ssh
+  cat /etc/init.d/ssh | sed 's@# Default-Stop:@# Default-Stop:         0 1 6@' > tmpFile
+  mv tmpFile /etc/init.d/ssh
+  chmod +x /etc/init.d/ssh
   update-rc.d -f ssh remove
   update-rc.d ssh defaults
 }
@@ -128,8 +142,10 @@ function fixSshService {
 
 #installMaven
 
+#installRuby
+
 #fixWiresharkRootProblem
 
-fixSshService
+#fixSshService
 
 #installArduino
