@@ -10,7 +10,6 @@ Missing steps:
 --------------
 - [ ] create self-compiled kernel and use it for image
 - [ ] Create image for sd-card
-- [ ] buildRootfs: add launchAtStartX 
 - [ ] buildRootfs: modify source.list and add main.pref
 - [ ] buildRootfs: automatic resizeRootfs at first bootup
 
@@ -30,6 +29,7 @@ Missing steps:
 - [ ] try karaf 3.0.2-snapshot (or 2.4.0) -> due to java8 support
 - [ ] test bluetooth
 - [ ] post-installation: When buildRootfs steps are done, adjust script accordingly.
+- [ ] post-installation: Solve dependencies of launchAtStartX in post-installation-script.
 
 Create a partition backup:
 ==========================
