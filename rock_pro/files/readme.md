@@ -1,4 +1,4 @@
-Post-installation
-=================
+Files
+=====
 
-After installation, run `post-installation.sh` for setting up some basics.
+The files in this directory can be used by the post-installation script (in the script directory).
