@@ -57,6 +57,15 @@ function changeXtermColors {
 
 function startConkyAtStartx {
   assertLaunchStartxScriptExists
+  cat /root/launchAtStartx.sh | sed '/^exit/d' > tmpFile
+  echo "# CONKY" >> tmpFile
+  echo "killall conky" >> tmpFile
+  echo "sleep 10" >> tmpFile
+  echo "conky &" >> tmpFile
+  echo "" >> tmpFile
+  echo "exit" >> tmpFile
+  mv tmpFile /root/launchAtStartx.sh
+  chmod +x /root/launchAtStartx.sh
 }
 
 function installChromium {
