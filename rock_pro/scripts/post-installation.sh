@@ -15,6 +15,17 @@ filedir=${basedir}/files
 # functions
 ##########################################################################################################
 
+function assertLaunchStartxScriptExists {
+  if [ ! -f /root/launchAtStartx.sh ]; then
+    # script does not exist yet. Create it!
+    cp ${filedir}/launchAtStartx.sh /root/
+  fi
+  if [ ! -f /root/.config/autostart/launchAtStartx.desktop ]; then
+    # launchAtStartx.desktop does not exist yet. Create it!
+    cp ${filedir}/launchAtStartx.desktop /root/.config/autostart/
+  fi
+}
+
 function setKeyboardlayout {
   dpkg-reconfigure keyboard-configuration
 }
@@ -45,8 +56,7 @@ function changeXtermColors {
 }
 
 function startConkyAtStartx {
-  cp ${filedir}/launchAtStartx.sh /root/
-  cp ${filedir}/launchAtStartx.desktop /root/.config/autostart/
+  assertLaunchStartxScriptExists
 }
 
 function installChromium {
