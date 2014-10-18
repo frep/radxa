@@ -26,6 +26,11 @@ function assertLaunchStartxScriptExists {
   fi
 }
 
+function enableSdcardAutomount {
+  mkdir /media/sd
+  echo "/dev/mmcblk0p1 /media/sd ext4 rw,nosuid,nodev 0 0" >> /etc/fstab
+}
+
 function setKeyboardlayout {
   dpkg-reconfigure keyboard-configuration
 }
@@ -39,6 +44,7 @@ function updateAndUpgrade {
 }
 
 function installConky {
+  enableSdcardAutomount
   apt-get install conky -y
   cp ${filedir}/.conkyrc /root/
 }
