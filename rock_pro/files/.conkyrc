@@ -122,6 +122,10 @@ ${color1}SWAP: ${color2}$swap/$swapmax ($swapperc%) ${swapbar 5}
 ${template1 FILESYSTEMS}
 ${template2 /}
 ${fs_bar /}
+${if_mounted /media/sd}
+${template2 /media/sd}
+${fs_bar /media/sd}
+${endif}
 
 ${template1 NETWORK}
 ${if_gw}\
