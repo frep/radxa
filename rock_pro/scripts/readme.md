@@ -30,10 +30,10 @@ delete it, if you don't need it. As before, you can download this workspace and 
 
 Missing steps:
 --------------
-- [ ] try karaf 3.0.2-snapshot (or 2.4.0) -> due to java8 support
+- [x] karaf 3.0.2 is working
 - [ ] test bluetooth
-- [ ] post-installation: When buildRootfs steps are done, adjust script accordingly.
-- [ ] post-installation: Solve dependencies of launchAtStartX in post-installation-script.
+- [x] post-installation: Solve dependencies of launchAtStartX in post-installation-script.
+- [ ] post-installation: after installRuby default ruby is not set. (At the moment run `rvm ruby-2.1.3 --default` after reboot)
 
 Create a partition backup:
 ==========================
