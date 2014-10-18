@@ -102,6 +102,9 @@ nameserver 8.8.8.8
 EOF
 
 cat > kali-$architecture/etc/network/interfaces << "EOF"
+auto lo
+iface lo inet loopback
+
 auto eth0
 iface eth0 inet dhcp
 EOF
