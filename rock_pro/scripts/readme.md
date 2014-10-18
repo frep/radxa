@@ -6,12 +6,17 @@ Steps to create an kali-image:
 2. create a Nand-image for radxa rock pro:
    `./createNandImg.sh <versionNumer>` (e.g. ./createNandImg.sh 1.0.0)
 
+Flash the image:
+================
+Simply run: `./flashNandImg.sh /path/to/image`
+
 Missing steps:
 --------------
 - [ ] create self-compiled kernel and use it for image
 - [ ] Create image for sd-card
-- [ ] buildRootfs: modify source.list and add main.pref
-- [ ] buildRootfs: automatic resizeRootfs at first bootup
+- [x] buildRootfs: modify source.list and add main.pref
+- [x] buildRootfs: automatic resizeRootfs at first bootup
+- [x] create script to flash the nand
 
 Notes:
 ------
@@ -20,9 +25,8 @@ Notes:
 
 Getting started:
 ================
-The first thing you may want to do after the image is running, is to resize the Rootfs to use the whole nand:
-`resize2fs /dev/block/mtd/by-name/linuxroot`
-Once this is done, you can download this workspace and modify the script: `post-installation.sh`. Uncomment all the steps, you want to be executed. Then run it!
+Now, the resize of the flash is automatically done at first boot. Also, the first boot is logged into the file /root/firstBoot.log. Feel free to
+delete it, if you don't need it. As before, you can download this workspace and modify the script: `post-installation.sh`. Uncomment all the steps, you want to be executed. Then run it!
 
 Missing steps:
 --------------

@@ -11,6 +11,7 @@ basedir=$(pwd)
 kerneldir=${basedir}/kernel_rockchip
 tooldir=${basedir}/tools
 imagedir=${basedir}/images
+filedir=${basedir}/files
 
 export ARCH=arm
 export CROSS_COMPILE=arm-linux-gnueabihf-
@@ -200,11 +201,40 @@ cat > kali-$architecture/etc/rc.local << "EOF"
 #
 # By default this script does nothing.
 /usr/local/bin/mtd-by-name.sh
+if [ ! -d /root/.config ]; then
+    # at first boot, the directory /root/.config does not exist yet
+    # Resize rootfs to use the full nand
+    resize2fs /dev/block/mtd/by-name/linuxroot;
+    # log the first boot
+    dmesg > /root/firstBoot.log
+fi
 su -l root -c startx
 exit 0
 EOF
 
 chmod +x kali-$architecture/etc/rc.local
+
+# add some repositories
+echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> kali-$architecture/etc/apt/sources.list
+echo "deb-src http://ftp.us.debian.org/debian testing main contrib non-free" >> kali-$architecture/etc/apt/sources.list
+echo "deb http://ftp.debian.org/debian/ jessie-updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
+echo "deb-src http://ftp.debian.org/debian/ jessie-updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
+echo "deb http://security.debian.org/ jessie/updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
+echo "deb-src http://security.debian.org/ jessie/updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
+
+cat > kali-$architecture/etc/apt/preferences.d/main.pref << "EOF"
+Package: *
+Pin: release n=kali
+Pin-Priority: 350
+
+Package: *
+Pin: release n=kali-bleeding-edge
+Pin-Priority: 300
+
+Package: *
+Pin: release n=jessie
+Pin-Priority: 10
+EOF
 
 LANG=C chroot kali-$architecture /cleanup
 
