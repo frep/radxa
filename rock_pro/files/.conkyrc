@@ -124,7 +124,7 @@ ${template2 /}
 ${fs_bar /}
 ${if_mounted /media/sd}
 ${template2 /media/sd}
-${fs_bar /media/sd}
+${fs_bar /media/sd}\
 ${endif}
 
 ${template1 NETWORK}
