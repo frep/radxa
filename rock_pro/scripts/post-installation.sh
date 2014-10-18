@@ -88,6 +88,15 @@ function installJava {
   echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /root/.bashrc
 }
 
+function installKaraf {
+  mkdir -p -v /opt/karaf
+  tar xvzf ${filedir}/apache-karaf-3.0.2.tar.gz -C /opt/karaf
+  echo "" >> /root/.bashrc
+  echo "export KARAFHOME=\"/opt/karaf/apache-karaf-3.0.2\"" >> /root/.bashrc
+  echo "export PATH=\$PATH:\$KARAFHOME/bin" >> /root/.bashrc
+
+}
+
 function installMaven {
   mkdir -p -v /opt/maven
   tar xvzf ${filedir}/apache-maven-3.2.3-bin.tar.gz -C /opt/maven
@@ -159,7 +168,11 @@ function replaceNetworkManagerWithWicd {
 
 #installChromium
 
+#installArduino
+
 #installJava
+
+#installKaraf
 
 #installMaven
 
@@ -170,7 +183,5 @@ function replaceNetworkManagerWithWicd {
 #fixSshService
 
 #replaceNetworkManagerWithWicd
-
-#installArduino
 
 #shutdown -r now
