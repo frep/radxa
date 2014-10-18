@@ -34,10 +34,6 @@ function setTimezone {
   dpkg-reconfigure tzdata
 }
 
-function resizeRootfs {
-  resize2fs /dev/block/mtd/by-name/linuxroot
-}
-
 function updateAndUpgrade {
   apt-get clean && apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
 }
@@ -69,8 +65,6 @@ function startConkyAtStartx {
 }
 
 function installChromium {
-  cp -f ${filedir}/sources.list /etc/apt/sources.list
-  cp ${filedir}/main.pref /etc/apt/preferences.d/
   apt-get update
   apt-get install libc6  -t testing -y
   apt-get install libnspr4 libnss3 libxss1 -y
@@ -80,13 +74,11 @@ function installChromium {
 }
 
 function installJava {
-  mkdir -p -v /opt/java
-  tar xvzf ${filedir}/jdk-8u6-linux-arm-vfp-hflt.tar.gz -C /opt/java
-  update-alternatives --install "/usr/bin/java" "java" "/opt/java/jdk1.8.0_06/bin/java" 1
-  update-alternatives --set java /opt/java/jdk1.8.0_06/bin/java
-  echo "JAVA_HOME=\"/opt/java/jdk1.8.0_06\"" >> /etc/enviroment
+  dpkg -i ${filedir}/oracle-java8-jdk_8_armhf.deb
+  update-alternatives --set java /usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt/jre/bin/java
+  echo "JAVA_HOME=\"/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt\"" >> /etc/enviroment
   echo "" >> /root/.bashrc
-  echo "export JAVA_HOME=\"/opt/java/jdk1.8.0_06\"" >> /root/.bashrc
+  echo "export JAVA_HOME=\"/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt\"" >> /root/.bashrc
   echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /root/.bashrc
 }
 
@@ -136,6 +128,7 @@ function fixSshService {
 }
 
 function replaceNetworkManagerWithWicd {
+  update-rc.d -f network-manager remove
   apt-get remove network-manager -y
   apt-get install wicd -y
 }
@@ -147,8 +140,6 @@ function replaceNetworkManagerWithWicd {
 #setKeyboardlayout
 
 #setTimezone
-
-#resizeRootfs
 
 #updateAndUpgrade
 
@@ -175,3 +166,5 @@ function replaceNetworkManagerWithWicd {
 #replaceNetworkManagerWithWicd
 
 #installArduino
+
+#shutdown -r now
