@@ -148,6 +148,14 @@ function replaceNetworkManagerWithWicd {
   apt-get install wicd -y
 }
 
+function installPyRock {
+  apt-get install gcc python-dev -y
+  cd /root
+  git clone https://github.com/radxa/pyRock
+  cd /root/pyRock
+  python setup.py install
+}
+
 ##########################################################################################################
 # program
 ##########################################################################################################
@@ -183,5 +191,7 @@ function replaceNetworkManagerWithWicd {
 #fixSshService
 
 #replaceNetworkManagerWithWicd
+
+#installPyRock
 
 #shutdown -r now
