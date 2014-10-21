@@ -34,6 +34,7 @@ Missing steps:
 - [ ] test bluetooth
 - [x] post-installation: Solve dependencies of launchAtStartX in post-installation-script.
 - [ ] post-installation: after installRuby default ruby is not set. (At the moment run `rvm ruby-2.1.3 --default` after reboot)
+- [ ] post-installation: get netatalk running for remote access from mac os
 
 Create a partition backup:
 ==========================
