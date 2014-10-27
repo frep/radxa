@@ -17,6 +17,7 @@ Missing steps:
 - [x] buildRootfs: modify source.list and add main.pref
 - [x] buildRootfs: automatic resizeRootfs at first bootup
 - [x] create script to flash the nand
+- [ ] getTools: add pyRock
 
 Notes:
 ------
@@ -35,6 +36,7 @@ Missing steps:
 - [x] post-installation: Solve dependencies of launchAtStartX in post-installation-script.
 - [ ] post-installation: after installRuby default ruby is not set. (At the moment run `rvm ruby-2.1.3 --default` after reboot)
 - [ ] post-installation: get netatalk running for remote access from mac os
+- [ ] post-installation: add installPyRock
 
 Create a partition backup:
 ==========================
