@@ -151,9 +151,11 @@ function replaceNetworkManagerWithWicd {
 function installPyRock {
   apt-get install gcc python-dev -y
   cd /root
-  git clone https://github.com/radxa/pyRock
+  git clone https://github.com/frep/pyRock
   cd /root/pyRock
   python setup.py install
+  # install packages for i2c
+  apt-get install i2c-tools libi2c-dev python-smbus -y
 }
 
 ##########################################################################################################
