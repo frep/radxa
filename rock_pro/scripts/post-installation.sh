@@ -161,6 +161,15 @@ function installPyRock {
   apt-get install i2c-tools libi2c-dev python-smbus -y
 }
 
+function installWiringX {
+  apt-get install cmake -y
+  cd
+  git clone https://github.com/pilight/wiringX
+  cd wiringX
+  ./gen.package.sh
+  dpkg -i libwiringx*.deb
+}
+
 ##########################################################################################################
 # program
 ##########################################################################################################
@@ -198,5 +207,7 @@ function installPyRock {
 #replaceNetworkManagerWithWicd
 
 #installPyRock
+
+#installWiringX
 
 #shutdown -r now
