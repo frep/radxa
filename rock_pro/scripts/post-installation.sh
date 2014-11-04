@@ -127,6 +127,9 @@ function installArduino {
   cp ${filedir}/cdc-acm.ko /lib/modules/3.0.36+/kernel/drivers/usb/class/
   depmod -a
   echo "cdc-acm" >> /etc/modules
+  cd
+  rm -rf sketchbook/
+  git clone https://github.com/frep/Arduino sketchbook
 }
 
 function fixWiresharkRootProblem {

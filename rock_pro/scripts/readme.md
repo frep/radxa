@@ -37,7 +37,6 @@ Missing steps:
 - [ ] post-installation: after installRuby default ruby is not set. (At the moment run `rvm ruby-2.1.3 --default` after reboot)
 - [ ] post-installation: get netatalk running for remote access from mac os
 - [x] post-installation: add installPyRock
-- [ ] post-installation: at installArduino download the arduino libraries
 
 Create a partition backup:
 ==========================
