@@ -62,14 +62,17 @@ fi
 
 if [ ! -d ${tooldir} ]; then
 	echo "tools not found. Please run ./getTools.sh first"
+	exit 0
 fi
 
 if [ ! -f ${kerneldir}/boot-linux.img ]; then
 	echo "boot-linux.img not found. Please check variable kerneldir!"
+	exit 0
 fi
 
 if [ ! -f ${kerneldir}/modules.tar.gz ]; then
 	echo "modules and firmware archive: modules.tar.gz not found. Please check variable kerneldir!"
+	exit 0
 fi
 
 # create the rootfs image
