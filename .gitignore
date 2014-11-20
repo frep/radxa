@@ -1,5 +1,6 @@
-# ignore kernel directory
+# ignore kernel directories
 kernel_rockchip/
+linux-rockchip
 # ignore tools directory
 tools/
 # ignore images directory

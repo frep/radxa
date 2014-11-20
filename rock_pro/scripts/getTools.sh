@@ -11,16 +11,17 @@ basedir=$(pwd)
 kerneldir=${basedir}/kernel_rockchip
 tooldir=${basedir}/tools
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
-
 
 ##########################################################################################################
 # Functions
 ##########################################################################################################
 
-function getCrossCompiler {
+function getCrossCompiler1 {
 	git clone https://github.com/offensive-security/gcc-arm-linux-gnueabihf-4.7
+}
+
+function getCrossCompiler2 {
+	git clone -b kitkat-release --depth 1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6
 }
 
 function generateInitrd {
@@ -85,18 +86,34 @@ sudo apt-get install build-essential lzop libncurses5-dev libssl-dev lib32stdc++
 # get arm cross-compiler
 if [ -d gcc-arm-linux-gnueabihf-4.7 ]; then
         while true; do
-                read -p "Cross compiler directory already exists. Delete and [r]eimport or [s]kip ?" rs
+                read -p "Cross compiler directory gcc-arm-linux-gnueabihf-4.7 already exists. Delete and [r]eimport or [s]kip ?" rs
                 case $rs in
                 [Rr]* ) rm -rf gcc-arm-linux-gnueabihf-4.7;
-                        getCrossCompiler;
+                        getCrossCompiler1;
                         break;;
                 [Ss]* ) break;;
                 * )     echo "Please answer [r] or [s].";;
                 esac
         done
 else
-	getCrossCompiler
+	getCrossCompiler1
 fi
+
+if [ -d arm-eabi-4.6 ]; then
+        while true; do
+                read -p "Cross compiler directory arm-eabi-4.6 already exists. Delete and [r]eimport or [s]kip ?" rs
+                case $rs in
+                [Rr]* ) rm -rf arm-eabi-4.6;
+                        getCrossCompiler2;
+                        break;;
+                [Ss]* ) break;;
+                * )     echo "Please answer [r] or [s].";;
+                esac
+        done
+else
+        getCrossCompiler2
+fi
+
 
 # generate initrd
 if [ -d initrd ]; then

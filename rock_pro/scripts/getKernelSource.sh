@@ -11,7 +11,7 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/kernel_rockchip
+kerneldir=${basedir}/linux-rockchip
 
 
 ##########################################################################################################
@@ -20,7 +20,7 @@ kerneldir=${basedir}/kernel_rockchip
 
 function getKernel {
 	cd ${basedir}
-	git clone -b radxa-stable-3.0 https://github.com/frep/kernel_rockchip.git
+	git clone -b radxa-stable-3.0 https://github.com/radxa/linux-rockchip.git
 	cd ${kerneldir}
 	echo "Patching kernel"
 	wget http://patches.aircrack-ng.org/mac80211.compat08082009.wl_frag+ack_v1.patch -O mac80211.patch
