@@ -51,8 +51,10 @@ function getPackTools {
 function getUpgradeTool {
 	mkdir upgradeTool
 	cd upgradeTool
-	wget http://dl.radxa.com/rock/tools/linux/Linux_Upgrade_Tool_v1.16.zip
-	unzip Linux_Upgrade_Tool_v1.16.zip
+	wget http://dl.radxa.com/rock/tools/linux/Linux_Upgrade_Tool_v1.21.zip
+	unzip Linux_Upgrade_Tool_v1.21.zip
+	cp Linux_Upgrade_Tool_v1.21/upgrade_tool .
+	rm -rf Linux_Upgrade_Tool_v1.21
 	cd ..
 }
 
