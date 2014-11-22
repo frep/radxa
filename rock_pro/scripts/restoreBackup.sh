@@ -8,14 +8,10 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/kernel_rockchip
-tooldir=${basedir}/tools
-backupdir=${basedir}/backups
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
+# read config-file
+source ${basedir}/build.cfg
 
-today=$(date +"%Y_%m_%d")
 partition=" "
 offset=0xA000
 size=0xEF0000

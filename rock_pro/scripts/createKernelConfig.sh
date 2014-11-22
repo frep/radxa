@@ -4,14 +4,13 @@
 # Paths and variables
 ##########################################################################################################
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
-
 scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/kernel_rockchip
+
+# read config-file
+source ${basedir}/build.cfg
 
 
 ##########################################################################################################

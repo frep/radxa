@@ -4,28 +4,31 @@
 # Paths and variables
 ##########################################################################################################
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
-
 scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/linux-rockchip
+
+# read config-file
+source ${basedir}/build.cfg
 
 
 ##########################################################################################################
 # Functions
 ##########################################################################################################
 
+function patchKernel {
+        cd ${kerneldir}
+        echo "Patching kernel"
+        wget http://patches.aircrack-ng.org/mac80211.compat08082009.wl_frag+ack_v1.patch -O mac80211.patch
+        patch -p1 --no-backup-if-mismatch < mac80211.patch
+        touch .scmversion
+}
+
 function getKernel {
 	cd ${basedir}
 	git clone -b radxa-stable-3.0 https://github.com/radxa/linux-rockchip.git
-	cd ${kerneldir}
-	echo "Patching kernel"
-	wget http://patches.aircrack-ng.org/mac80211.compat08082009.wl_frag+ack_v1.patch -O mac80211.patch
-	patch -p1 --no-backup-if-mismatch < mac80211.patch
-	touch .scmversion
+	patchKernel
 }
 
 

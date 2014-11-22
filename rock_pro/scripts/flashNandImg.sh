@@ -8,20 +8,10 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/kernel/ubuntuImage
-imagedir=${basedir}/images
-rootfsdir=${imagedir}/kali-$1
-tooldir=${basedir}/tools
-backupdir=${basedir}/backups
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
-export PATH=${PATH}:${tooldir}/gcc-arm-linux-gnueabihf-4.7/bin
+# read config-file
+source ${basedir}/build.cfg
 
-today=$(date +"%Y_%m_%d")
-partition=" "
-offset=" "
-size=" "
 
 ##########################################################################################################
 # functions
@@ -32,13 +22,9 @@ size=" "
 # program
 ##########################################################################################################
 
-if [[ $# -eq 0 ]] ; then
-	echo "Please pass /path/to/nand-image"
+if [ ! -f ${rootfsdir}/${nandImageName}-${version}.img ]; then
+	echo "no nand-image found at "${rootfsdir}". Create image with <createNandImage.sh>!"
 	exit 0
-fi
-
-if [ ! -f $1 ]; then
-	echo "no nand-image found at "$1". Please check path!"
 fi
 
 while true; do
@@ -50,6 +36,6 @@ while true; do
         esac
 done
 
-sudo ${tooldir}/upgradeTool/upgrade_tool uf $1
+sudo ${tooldir}/upgradeTool/upgrade_tool uf ${rootfsdir}/${nandImageName}-${version}.img
 
 exit

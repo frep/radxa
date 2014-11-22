@@ -7,3 +7,7 @@ tools/
 images/
 # ignore backup directory
 backups/
+# ignore debug directory
+debug/
+# ignore generated files
+rock_pro/kernel/currentBuild/

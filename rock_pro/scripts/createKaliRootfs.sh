@@ -8,27 +8,17 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/kernel_rockchip
-tooldir=${basedir}/tools
-imagedir=${basedir}/images
-filedir=${basedir}/files
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
+# read config-file
+source ${basedir}/build.cfg
 
 
 ##########################################################################################################
 # program
 ##########################################################################################################
 
-if [[ $# -ne 2 ]] ; then
-    	echo "Please pass version number and the kernel-directory"
-	echo "E.g. ./createKaliRootfs.sh 1.0.1 ../kernel/ubuntuImage"
-    exit 0
-fi
-
-if [ ! -f $2/modules.tar.gz ]; then
-	echo "modules and firmware archive not found. Check the kernel directory!"
+if [ ! -f ${bootImgDir}/modules.tar.gz ]; then
+	echo "modules and firmware archive not found. Check <bootImgDir> in build.cfg!"
 	exit 0
 fi
 
@@ -38,8 +28,7 @@ if [ ! -d ${imagedir} ]; then
 	mkdir images
 fi
 
-kalidir=${imagedir}/kali-$1
-kerneldir=$2
+kalidir=${imagedir}/kali-${version}
 
 # Package installations for various sections.
 # This will build a minimal XFCE Kali system with the top 10 tools.
@@ -64,7 +53,11 @@ export architecture="armhf"
 # to unset it.
 #export http_proxy="http://localhost:3142/"
 
-mkdir -p ${kalidir}
+if [ ! -d ${kalidir} ]; then
+        # image directory does not exist yet. Create it!
+        mkdir -p ${kalidir}
+fi
+
 cd ${kalidir}
 
 #Based on kali-arm-build-scripts/mini-x
@@ -86,7 +79,7 @@ deb http://http.kali.org/kali kali main contrib non-free
 deb http://security.kali.org/kali-security kali/updates main contrib non-free
 EOF
 
-echo "kali" > kali-$architecture/etc/hostname
+echo ${hostname} > kali-$architecture/etc/hostname
 
 cat > kali-$architecture/etc/hosts << "EOF"
 127.0.0.1       kali    localhost
@@ -138,7 +131,7 @@ rm -f /debconf.set
 apt-get update
 apt-get -y install git-core binutils ca-certificates initramfs-tools uboot-mkimage
 apt-get -y install locales console-common less nano git
-echo "root:toor" | chpasswd
+echo "root:${rootPw}" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
 rm -f /etc/udev/rules.d/70-persistent-net.rules
 apt-get --yes --force-yes install $packages
@@ -247,14 +240,14 @@ umount kali-$architecture/dev/
 umount kali-$architecture/proc
 
 # Create the disk and partition it
-echo "Creating rock_rootfs-$1.img"
+echo "Creating rock_rootfs-${version}.img"
 cd ${kalidir}
-dd if=/dev/zero of=rock_rootfs-$1.img bs=1M count=1536
+dd if=/dev/zero of=rock_rootfs-${version}.img bs=1M count=${nandImageSize}
 
 #kernel use the label linuxroot to mount the rootfs as /
-echo "Formatting rock_rootfs-$1.img to ext4"
-mkfs.ext4 -F -L linuxroot rock_rootfs-$1.img
-rootfs="rock_rootfs-$1.img"
+echo "Formatting rock_rootfs-${version}.img to ext4"
+mkfs.ext4 -F -L linuxroot rock_rootfs-${version}.img
+rootfs="rock_rootfs-${version}.img"
 
 # Create the dirs for the partitions and mount them
 echo "Mounting rootfs"
@@ -268,7 +261,7 @@ rsync -HPavz -q ${kalidir}/kali-$architecture/ ${rootimg}
 # Uncomment this if you use apt-cacher-ng otherwise git clones will fail.
 #unset http_proxy
 
-cd ${kerneldir}
+cd ${bootImgDir}
 tar xvfz modules.tar.gz -C ${rootimg}/lib
 
 # enable autologin

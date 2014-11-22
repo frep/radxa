@@ -8,25 +8,41 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/kernel_rockchip
-tooldir=${basedir}/tools
 
-export ARCH=arm
-export CROSS_COMPILE=arm-linux-gnueabihf-
-export PATH=${PATH}:${tooldir}/gcc-arm-linux-gnueabihf-4.7/bin
-export PATH=${PATH}:${tooldir}/rockchip-mkbootimg
+# read config-file
+source ${basedir}/build.cfg
+
 
 ##########################################################################################################
 # Functions
 ##########################################################################################################
 function buildKernelAndModules {
+	cd ${kerneldir}
 	make -j8
 	mkdir modules
-	export INSTALL_MOD_PATH=./modules
-	make modules
-	make modules_install
+   	make INSTALL_MOD_PATH=./modules modules modules_install
 }
 
+function generateInitramfs {
+	cd ${kerneldir}
+	git clone https://github.com/radxa/initrd.git
+	make -C initrd
+}
+
+function buildBootImg {
+	# Create boot-linux.img
+	mkbootimg --kernel ${kerneldir}/arch/arm/boot/Image --ramdisk ${kerneldir}/initrd.img -o boot-linux.img
+}
+
+function createModulesArchive {
+	cd ${kerneldir}/modules/lib
+	tar cvfz modules.tar.gz firmware/ modules/
+}
+
+function moveData {
+	cp ${kerneldir}/boot-linux.img ${basedir}/kernel/currentBuild/
+	mv ${kerneldir}/modules/lib/modules.tar.gz ${basedir}/kernel/currentBuild/
+}
 
 ##########################################################################################################
 # program
@@ -50,6 +66,8 @@ if [ -f boot-linux.img ]; then
                 case $rs in
                 [Rr]* ) rm -rf modules;
 			rm boot-linux.img;
+			rm -rf initrd;
+			rm initrd.img;
 			rm arch/arm/boot/Image;
 			rm arch/arm/boot/zImage;
                         break;;
@@ -57,14 +75,17 @@ if [ -f boot-linux.img ]; then
                 * )     echo "Please answer [r] or [s].";;
                 esac
         done
-
 fi
 
 
 buildKernelAndModules
 
-# Create boot-linux.img
-mkbootimg --kernel ${kerneldir}/arch/arm/boot/Image --ramdisk ${tooldir}/initrd/initrd.img -o boot-linux.img
+generateInitramfs
 
+buildBootImg
+
+createModulesArchive
+
+moveData
 
 exit

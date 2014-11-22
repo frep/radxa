@@ -8,8 +8,9 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
-kerneldir=${basedir}/kernel_rockchip
-tooldir=${basedir}/tools
+
+# read config-file
+source ${basedir}/build.cfg
 
 
 ##########################################################################################################
@@ -22,12 +23,6 @@ function getCrossCompiler1 {
 
 function getCrossCompiler2 {
 	git clone -b kitkat-release --depth 1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6
-}
-
-function generateInitrd {
-	git clone https://github.com/frep/initrd
-	make -C initrd
-	mv initrd.img initrd/
 }
 
 function installMkbootimg {
@@ -112,23 +107,6 @@ if [ -d arm-eabi-4.6 ]; then
         done
 else
         getCrossCompiler2
-fi
-
-
-# generate initrd
-if [ -d initrd ]; then
-        while true; do
-                read -p "initrd directory already exists. Delete and [r]eimport or [s]kip ?" rs
-                case $rs in
-                [Rr]* ) rm -rf initrd;
-                        generateInitrd;
-                        break;;
-                [Ss]* ) break;;
-                * )     echo "Please answer [r] or [s].";;
-                esac
-        done
-else
-        generateInitrd
 fi
 
 # get mkbootimg

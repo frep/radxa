@@ -1,23 +1,22 @@
-Steps to create an kali-image:
-==============================
-1. get the needed tools: 
+Steps to create a nand-kali-image:
+==================================
+1. get the needed tools (if not done yet): 
    `./getTools.sh`
 
-2. create a Nand-image for radxa rock pro:
-   `./createNandImg.sh <versionNumer>` (e.g. ./createNandImg.sh 1.0.0)
+2. Optional: check build-configuration:
+   `nano build.cfg`
+
+3. create a Nand-image for radxa rock pro:
+   `./createNandImg.sh`
 
 Flash the image:
 ================
-Simply run: `./flashNandImg.sh /path/to/image`
+Simply run: `./flashNandImg.sh`
 
 Missing steps:
 --------------
 - [ ] create self-compiled kernel and use it for image
 - [ ] Create image for sd-card
-- [x] buildRootfs: modify source.list and add main.pref
-- [x] buildRootfs: automatic resizeRootfs at first bootup
-- [x] create script to flash the nand
-- [ ] getTools: add pyRock
 
 Notes:
 ------
