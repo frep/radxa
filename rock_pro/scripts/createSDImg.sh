@@ -18,11 +18,13 @@ source ${basedir}/build.cfg
 ##########################################################################################################
 
 function createSDImage {
+	echo "create raw sd-image"
 	cd ${rootfsdir}
 	dd if=/dev/zero of=${sdImageName}-${version}.img bs=1M count=${sdImageSize}
 }
 
 function copyBootloader {
+	echo "copy bootloader to sd-image"
 	cd ${rootfsdir}
 	dd if=${bootloaderdir}/sdboot_rk3188.img of=${sdImageName}-${version}.img conv=notrunc
 }
@@ -33,6 +35,7 @@ function createParameterImg {
 }
 
 function copyParameter {
+	echo "copy parameter.img to sd-image"
 	cd ${rootfsdir}
 	createParameterImg
 	dd if=parameter.img of=${sdImageName}-${version}.img conv=notrunc seek=$((0x2000))
@@ -40,18 +43,20 @@ function copyParameter {
 }
 
 function copyKernel {
+	echo "copy kernel to sd-image"
 	cd ${rootfsdir}
 	dd if=${bootImgDir}/boot-linux.img of=${sdImageName}-${version}.img conv=notrunc seek=$((0x2000+0x2000))
 }
 
 function copyRootfs {
+	echo "copy rootfs to sd-image"
 	cd ${rootfsdir}
 	dd if=rock_rootfs-${version}.img of=${sdImageName}-${version}.img conv=notrunc seek=$((0x2000+0xA000))
 }
 
 function partitionSDImage {
 	cd ${rootfsdir}
-	# still to do !!!!!
+	echo "sd-image still needs to be partitioned"
 }
 
 ##########################################################################################################
@@ -78,9 +83,11 @@ if [ ! -d ${rootfsdir} ]; then
         mkdir ${rootfsdir}
 fi
 
-# create the rootfs image
-cd ${scriptdir}
-./createKaliRootfs.sh
+# create the rootfs image, if it doesn't exist yet
+if [ ! -f ${rootfsdir}/rock_rootfs-${version}.img ]; then
+	cd ${scriptdir}
+	./createKaliRootfs.sh
+fi
 
 createSDImage
 copyBootloader

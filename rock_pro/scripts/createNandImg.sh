@@ -65,10 +65,11 @@ if [ ! -d ${rootfsdir} ]; then
         mkdir ${rootfsdir}
 fi
 
-
-# create the rootfs image
-cd ${scriptdir}
-./createKaliRootfs.sh
+# create the rootfs image, if it doesn't exist yet
+if [ ! -f ${rootfsdir}/rock_rootfs-${version}.img ]; then
+        cd ${scriptdir}
+        ./createKaliRootfs.sh
+fi
 
 createNandImg
 
