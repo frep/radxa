@@ -48,15 +48,43 @@ function copyKernel {
 	dd if=${bootImgDir}/boot-linux.img of=${sdImageName}-${version}.img conv=notrunc seek=$((0x2000+0x2000))
 }
 
+function prepareRootfsToSD {
+	cd ${rootfsdir}
+	mkdir mp
+	mount -o loop rock_rootfs-${version}.img mp
+	cat mp/etc/rc.local | sed 's@imagetype="nand"@imagetype="sd"@' > tmpFile
+	mv tmpFile mp/etc/rc.local
+	chmod +x mp/etc/rc.local
+	umount mp
+	rmdir mp
+}
+
 function copyRootfs {
 	echo "copy rootfs to sd-image"
 	cd ${rootfsdir}
 	dd if=rock_rootfs-${version}.img of=${sdImageName}-${version}.img conv=notrunc seek=$((0x2000+0xA000))
 }
 
+function restoreRootfsToNand {
+        cd ${rootfsdir}
+        mkdir mp
+        mount -o loop rock_rootfs-${version}.img mp
+        cat mp/etc/rc.local | sed 's@imagetype="sd"@imagetype="nand"@' > tmpFile
+        mv tmpFile mp/etc/rc.local
+        chmod +x mp/etc/rc.local
+        umount mp
+        rmdir mp
+}
+
 function partitionSDImage {
 	cd ${rootfsdir}
-	echo "sd-image still needs to be partitioned"
+	echo "partition image to make it bootable"
+	echo "n
+p
+1
+49152
+
+w" | fdisk ${sdImageName}-${version}.img
 }
 
 ##########################################################################################################
@@ -93,7 +121,9 @@ createSDImage
 copyBootloader
 copyParameter
 copyKernel
+prepareRootfsToSD
 copyRootfs
+restoreRootfsToNand
 partitionSDImage
 
 echo "The kali-sdcard-image is located at: "${rootfsdir}"/"${sdImageName}"-"${version}".img"

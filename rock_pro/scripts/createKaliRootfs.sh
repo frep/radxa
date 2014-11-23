@@ -196,11 +196,20 @@ cat > kali-$architecture/etc/rc.local << "EOF"
 # bits.
 #
 # By default this script does nothing.
-/usr/local/bin/mtd-by-name.sh
+imagetype="nand"
+if [ ${imagetype} = "nand" ]; then
+    /usr/local/bin/mtd-by-name.sh
+fi
+
 if [ ! -d /root/.config ]; then
     # at first boot, the directory /root/.config does not exist yet
-    # Resize rootfs to use the full nand
-    resize2fs /dev/block/mtd/by-name/linuxroot;
+    if [ ${imagetype} = "nand" ]; then
+        # Resize rootfs to use the full nand
+        resize2fs /dev/block/mtd/by-name/linuxroot;
+    else
+        # Resize rootfs to use the full sd-card
+	resize2fs /dev/mmcblk0p1
+    fi
     # log the first boot
     dmesg > /root/firstBoot.log
 fi
