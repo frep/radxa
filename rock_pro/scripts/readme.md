@@ -1,27 +1,43 @@
 Steps to create a nand-kali-image:
 ==================================
 1. get the needed tools (if not done yet): 
-   `./getTools.sh`
+   `./rock_pro/scripts/getTools.sh`
 
-2. Optional: check build-configuration:
-   `nano build.cfg`
+2. Optional: check general settings in build-configuration:
+   `nano /rock_pro/build.cfg`
 
 3. create a Nand-image for radxa rock pro:
    `./createNandImg.sh`
 
 Flash the image:
-================
-Simply run: `./flashNandImg.sh`
+----------------
+Simply run: `./rock_pro/scripts/flashNandImg.sh`
 
 Missing steps:
 --------------
 - [ ] create self-compiled kernel and use it for image
-- [ ] Create image for sd-card
+- [x] Create image for sd-card
 
-Notes:
-------
+Steps to create a sd-card-kali-image:
+=====================================
+1. get the needed tools (if not done yet):
+   `./rock_pro/scripts/getTools.sh`
+
+2. Optional: check general settings in build-configuration:
+   `nano /rock_pro/build.cfg`
+
+3. create a sd-image for radxa rock pro:
+   `./rock_pro/scripts/createSDImg.sh`
+
+Write the sd-card:
+------------------
+Insert and unmount your sd-card. Copy image: `sudo dd if=/path/to/image of=/<sdcard>`
+
+General notes:
+--------------
 * The script to create a rootfs is based on the work of [manu7irl](https://github.com/manu7irl).
 * The image is modified in such a way that after bootup there is an auto-login as root and startx gets executed due to the fact, that at the moment after bootup, there is no output visible, which is not useable.
+* If a sd-image is used, at first boot, the partition table of the sd-card is changed. After that, a reboot is performed, to apply these changes. At second boot, the actual resize of the rootfs is performed. So don't mind, that at first bootup, radxa restarts itself and take a while to boot. This is only the first time!
 
 Getting started:
 ================

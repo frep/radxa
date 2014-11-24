@@ -196,24 +196,43 @@ cat > kali-$architecture/etc/rc.local << "EOF"
 # bits.
 #
 # By default this script does nothing.
+
+writeStartup()
+{
+        cat /etc/rc.local | sed 's@^startup=.*$@startup=\"'$1'\"@' > tmpFile
+        mv tmpFile /etc/rc.local
+        chmod +x /etc/rc.local
+}
+
+startup="firstBoot"
 imagetype="nand"
 if [ ${imagetype} = "nand" ]; then
     /usr/local/bin/mtd-by-name.sh
 fi
 
-if [ ! -d /root/.config ]; then
-    # at first boot, the directory /root/.config does not exist yet
-    if [ ${imagetype} = "nand" ]; then
-        # Resize rootfs to use the full nand
-        resize2fs /dev/block/mtd/by-name/linuxroot;
-    else
-        # Resize rootfs to use the full sd-card
-	resize2fs /dev/mmcblk0p1
-    fi
-    # log the first boot
-    dmesg > /root/firstBoot.log
+if [ ${startup} = "firstBoot" ]; then
+        if [ ${imagetype} = "nand" ]; then
+                resize2fs /dev/block/mtd/by-name/linuxroot;
+                writeStartup "startupDone"
+        else
+                set +e
+        	echo  "d\nn\np\n1\n49152\n\nw" | fdisk /dev/mmcblk0
+		set -e
+                writeStartup "secondBoot"
+		shutdown -r now
+        fi
+        # log the first boot
+        dmesg > /root/firstBoot.log
 fi
+
+if [ ${startup} = "secondBoot" ]; then
+        resize2fs /dev/mmcblk0p1
+        writeStartup "startupDone"
+fi
+
+# start X at boot
 su -l root -c startx
+
 exit 0
 EOF
 
