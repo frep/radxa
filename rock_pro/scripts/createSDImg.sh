@@ -17,6 +17,18 @@ source ${basedir}/build.cfg
 # functions
 ##########################################################################################################
 
+function setAutoStartX {
+        cd ${rootfsdir}
+        mkdir mp
+        mount -o loop rock_rootfs-${version}.img mp
+	cat mp/etc/rc.local | sed 's@^autoStartX=.*$@autoStartX=\"'${autoStartX}'\"@' > tmpFile
+        mv tmpFile mp/etc/rc.local
+        chmod +x mp/etc/rc.local
+	sleep 10
+        umount mp
+        rmdir mp
+}
+
 function createSDImage {
 	echo "create raw sd-image"
 	cd ${rootfsdir}
@@ -55,6 +67,7 @@ function prepareRootfsToSD {
 	cat mp/etc/rc.local | sed 's@imagetype="nand"@imagetype="sd"@' > tmpFile
 	mv tmpFile mp/etc/rc.local
 	chmod +x mp/etc/rc.local
+	sleep 10
 	umount mp
 	rmdir mp
 }
@@ -72,6 +85,7 @@ function restoreRootfsToNand {
         cat mp/etc/rc.local | sed 's@imagetype="sd"@imagetype="nand"@' > tmpFile
         mv tmpFile mp/etc/rc.local
         chmod +x mp/etc/rc.local
+	sleep 10
         umount mp
         rmdir mp
 }
@@ -79,13 +93,15 @@ function restoreRootfsToNand {
 function partitionSDImage {
 	cd ${rootfsdir}
 	echo "partition image to make it bootable"
-	echo "n
-p
-1
-49152
-
-w" | fdisk ${sdImageName}-${version}.img
+	echo -e "n\np\n1\n49152\n\nw" | fdisk ${sdImageName}-${version}.img
 }
+
+function cleanup {
+        cd ${rootfsdir}
+        rm -rf kali-armhf
+        rm -rf kali-arm-build-scripts
+}
+
 
 ##########################################################################################################
 # program
@@ -115,6 +131,8 @@ fi
 if [ ! -f ${rootfsdir}/rock_rootfs-${version}.img ]; then
 	cd ${scriptdir}
 	./createKaliRootfs.sh
+	setAutoStartX
+	cleanup
 fi
 
 createSDImage

@@ -206,6 +206,7 @@ writeStartup()
 
 startup="firstBoot"
 imagetype="nand"
+autoStartX="false"
 if [ ${imagetype} = "nand" ]; then
     /usr/local/bin/mtd-by-name.sh
 fi
@@ -230,8 +231,10 @@ if [ ${startup} = "secondBoot" ]; then
         writeStartup "startupDone"
 fi
 
+if [ ${autoStartX} = "true" ]; then
 # start X at boot
 su -l root -c startx
+fi
 
 exit 0
 EOF
@@ -292,10 +295,12 @@ rsync -HPavz -q ${kalidir}/kali-$architecture/ ${rootimg}
 cd ${bootImgDir}
 tar xvfz modules.tar.gz -C ${rootimg}/lib
 
+if [ ${autoLogin} == "true" ]; then
 # enable autologin
 cd ${rootimg}/etc
 cat inittab | sed 's@1:2345:respawn:/sbin/getty 38400 tty1@1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>\&1@' > tempFile
 mv tempFile inittab
+fi
 
 # Unmount partitions
 cd ${basedir}

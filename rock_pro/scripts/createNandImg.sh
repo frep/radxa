@@ -17,6 +17,18 @@ source ${basedir}/build.cfg
 # functions
 ##########################################################################################################
 
+function setAutoStartX {
+        cd ${rootfsdir}
+        mkdir mp
+        mount -o loop rock_rootfs-${version}.img mp
+        cat mp/etc/rc.local | sed 's@^autoStartX=.*$@autoStartX=\"'${autoStartX}'\"@' > tmpFile
+        mv tmpFile mp/etc/rc.local
+        chmod +x mp/etc/rc.local
+        sleep 10
+        umount mp
+        rmdir mp
+}
+
 function getPackTools {
         git clone https://github.com/frep/rockchip-pack-tools
 }
@@ -69,6 +81,7 @@ fi
 if [ ! -f ${rootfsdir}/rock_rootfs-${version}.img ]; then
         cd ${scriptdir}
         ./createKaliRootfs.sh
+	setAutoStartX
 fi
 
 createNandImg
