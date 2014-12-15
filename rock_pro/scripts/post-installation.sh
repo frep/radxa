@@ -123,6 +123,12 @@ function installRuby {
   cp ${filedir}/helloWorld.rb /root/Documents/ruby/
 }
 
+function installInoTool {
+  apt-get install picocom python-pip -y
+  pip install ino
+  cp ${filedir}/.inorc /root/
+}
+
 function installArduino {
   apt-get install arduino -y
   mkdir -p /lib/modules/3.0.36+/kernel/drivers/usb/class
@@ -132,6 +138,7 @@ function installArduino {
   cd
   rm -rf sketchbook/
   git clone https://github.com/frep/Arduino sketchbook
+  installInoTool
 }
 
 function fixWiresharkRootProblem {
@@ -164,7 +171,7 @@ function installPyRock {
 }
 
 function installWiringX {
-  apt-get install cmake -y
+  apt-get install make cmake -y
   cd
   git clone https://github.com/pilight/wiringX
   cd wiringX
