@@ -131,7 +131,7 @@ rm -f /debconf.set
 apt-get update
 apt-get -y install git-core binutils ca-certificates initramfs-tools uboot-mkimage
 apt-get -y install locales console-common less nano git
-echo "root:${rootPw}" | chpasswd
+echo "root:toor" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
 rm -f /etc/udev/rules.d/70-persistent-net.rules
 apt-get --yes --force-yes install $packages
@@ -204,6 +204,15 @@ writeStartup()
         chmod +x /etc/rc.local
 }
 
+fixSshService()
+{
+	cat /etc/init.d/ssh | sed 's@^.*# Default-Stop:.*$@# Default-Stop:         0 1 6@' > tmpFile
+	mv tmpFile /etc/init.d/ssh
+	chmod +x /etc/init.d/ssh
+	update-rc.d -f ssh remove
+	update-rc.d ssh defaults
+}
+
 startup="firstBoot"
 imagetype="nand"
 autoStartX="false"
@@ -212,6 +221,7 @@ if [ ${imagetype} = "nand" ]; then
 fi
 
 if [ ${startup} = "firstBoot" ]; then
+	fixSshService
         if [ ${imagetype} = "nand" ]; then
                 resize2fs /dev/block/mtd/by-name/linuxroot;
                 writeStartup "startupDone"

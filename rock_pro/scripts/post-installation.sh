@@ -146,14 +146,6 @@ function fixWiresharkRootProblem {
   mv tmpFile /usr/share/wireshark/init.lua
 }
 
-function fixSshService {
-  cat /etc/init.d/ssh | sed 's@^.*# Default-Stop:.*$@# Default-Stop:         0 1 6@' > tmpFile
-  mv tmpFile /etc/init.d/ssh
-  chmod +x /etc/init.d/ssh
-  update-rc.d -f ssh remove
-  update-rc.d ssh defaults
-}
-
 function replaceNetworkManagerWithWicd {
   update-rc.d -f network-manager remove
   apt-get remove network-manager -y
@@ -210,8 +202,6 @@ function installWiringX {
 #installRuby
 
 #fixWiresharkRootProblem
-
-#fixSshService
 
 #replaceNetworkManagerWithWicd
 
