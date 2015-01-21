@@ -8,6 +8,9 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${scriptdir}
 cd ..
 basedir=$(pwd)
+cd ..
+radxadir=$(pwd)
+cd ${basedir}
 
 # read config-file
 source ${basedir}/build.cfg

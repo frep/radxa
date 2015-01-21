@@ -1,0 +1,193 @@
+###########################################################################
+# 
+# ~/.conkyrc
+# configuration file for Conky
+#
+###########################################################################
+
+# allignment and size
+# ===================
+alignment top_right
+gap_x 5
+gap_y 60
+minimum_size 5 5
+maximum_width 480
+
+# general settings
+# ================
+update_interval 1.0
+double_buffer yes
+draw_outline no
+draw_borders no
+border_width 0
+default_bar_size 0 5
+background yes
+out_to_console no
+out_to_stderr no
+extra_newline no
+
+# window
+# ======
+own_window yes
+own_window_class Conky
+own_window_type override
+own_window_transparent yes
+own_window_argb_visual yes
+own_window_hints undecorated,below,above,sticky,skip_taskbar,skip_pager
+
+
+# specific settings
+# =================
+cpu_avg_samples 2
+net_avg_samples 2
+no_buffers yes
+if_up_strictness link 	# values are:  up, link or address 
+
+# font
+# ====
+use_spacer none
+use_xft yes
+xftfont DejaVu Sans Mono:size=11
+draw_shades no
+uppercase no
+
+# colors (1 = text; 2 = data; 3 = header)
+# ======
+default_outline_color green
+default_color green
+default_shade_color green
+color1 FF00FF
+#color1 green
+color2 FF00FF
+#color2 green
+color3 999999
+#color3 green
+
+# graphs
+# ======
+draw_graph_borders yes
+show_graph_scale no
+show_graph_range no
+
+
+# templates (1 = header; 2 = filesystem; 3 = simple)
+# =========
+template1 ${color3}\1 ${hr 2}
+template2 ${color1}\1: ${alignr}${color2}${fs_used \1}/${fs_size \1}
+template3 ${color1}\1 ${color2}\2
+
+###########################################################################
+# Output
+###########################################################################
+TEXT
+${template1 SYSTEM\ INFORMATION}
+${color1}Hostname: ${color2}$nodename \
+  ${color1}Kernel: ${color2}$kernel         
+${color1}Uptime: ${color2}$uptime_short ${alignr}${color1}Time: ${color2}${time %Y-%m-%d %H:%M}
+
+${template1 CPU\ AND\ PROCESSES}
+${color1}Freq: ${color2}$freq MHz \
+| ${color1}Load: ${color2}$loadavg
+${if_existing /sys/devices/virtual/thermal/thermal_zone0/temp}\
+${color1}Temp  (°C)  : ${color2}${execi 5 cat /sys/devices/virtual/thermal/thermal_zone0/temp}
+${else}\
+${endif}\
+${color1}Usage (Avg) : ${color2}${cpu cpu0}% ${alignr}${cpubar cpu0 5,195}
+# if more than one cpu is available, then show the usage of each cpu separatly:
+${if_existing /sys/devices/system/cpu/cpu1}\
+${color1}      Core 1: ${color2}${cpu cpu1}% ${alignr}${cpubar cpu1 5,195}
+${color1}      Core 2: ${color2}${cpu cpu2}% ${alignr}${cpubar cpu2 5,195}
+${if_existing /sys/devices/system/cpu/cpu2}\
+${color1}      Core 3: ${color2}${cpu cpu3}% ${alignr}${cpubar cpu3 5,195}
+${else}\
+${endif}\
+${if_existing /sys/devices/system/cpu/cpu3}\
+${color1}      Core 4: ${color2}${cpu cpu4}% ${alignr}${cpubar cpu4 5,195}
+${else}\
+${endif}\
+${else}\
+${endif}\
+${color1}Processes: ${color2}$processes \
+| ${color1}Running: ${color2}$running_processes
+${color1}Name              ${color1}PID    ${color1}CPU%   ${color1}MEM%
+${color2}${top name 1} ${color2}${top pid 1} ${color2}${top cpu 1} ${color2}${top mem 1}
+${color2}${top name 2} ${color2}${top pid 2} ${color2}${top cpu 2} ${color2}${top mem 2}
+${color2}${top name 3} ${color2}${top pid 3} ${color2}${top cpu 3} ${color2}${top mem 3}
+${color2}${top name 4} ${color2}${top pid 4} ${color2}${top cpu 4} ${color2}${top mem 4}
+
+${template1 MEMORY\ AND\ SWAP}
+${color1}RAM:  ${color2}$mem/$memmax ($memperc%) ${membar 5}
+${color1}SWAP: ${color2}$swap/$swapmax ($swapperc%) ${swapbar 5}
+
+${template1 FILESYSTEMS}
+${template2 /}
+${fs_bar /}\
+${if_mounted /media/sd}
+${template2 /media/sd}
+${fs_bar /media/sd}\
+${endif}
+
+${template1 NETWORK}
+${if_gw}\
+${template3 State: Online} ${alignr}${color1}Ext. IP: ${color2}${execi 9000 wget -O - http://ip.tupeux.com | tail}
+###########################################################################
+# check, if interface eth0 exists
+${if_existing /sys/class/net/eth0}\
+# check, if interface eth0 is up
+${if_existing /sys/class/net/eth0/operstate up}\
+${color1}Interface:${color2} eth0  \
+| ${color1}IP:${color2} ${addr eth0}
+    ${color1}Speed: Down: ${color2}${downspeedf eth0} ${color1}| Up: ${color2}${upspeedf eth0}
+${else}\
+${color1}Interface:${color2} eth0  ${color1}down.
+${endif}\
+${else}\
+${endif}\
+###########################################################################
+# check, if interface eth1 exists
+${if_existing /sys/class/net/eth1}\
+# check, if interface eth1 is up
+${if_existing /sys/class/net/eth1/operstate up}\
+${color1}Interface:${color2} eth1  \
+| ${color1}IP:${color2} ${addr eth1}
+    ${color1}Speed: Down: ${color2}${downspeedf eth1} ${color1}| Up: ${color2}${upspeedf eth1}
+${else}\
+${color1}Interface:${color2} eth1  ${color1}down.
+${endif}\
+${else}\
+${endif}\
+###########################################################################
+# check, if interface mlan0 exists
+${if_existing /sys/class/net/mlan0}\
+# check, if interface mlan0 is up
+${if_existing /sys/class/net/mlan0/operstate up}\
+${template3 Interface: mlan0} \
+| ${color1}IP:${color2} ${addr mlan0}
+    ${color1}ESSID:${color2} ${wireless_essid mlan0} \
+| ${color1}Quality:${color2} ${wireless_link_qual_perc mlan0}%
+    ${color1}Speed: Down: ${color2}${downspeedf mlan0} ${color1}| Up: ${color2}${upspeedf mlan0}
+${else}\
+${color1}Interface:${color2} mlan0 ${color1}down.
+${endif}\
+${else}\
+${endif}\
+###########################################################################
+# check, if interface wlan0 exists
+${if_existing /sys/class/net/wlan0}\
+# check, if interface wlan0 is up
+${if_existing /sys/class/net/wlan0/operstate up}\
+${template3 Interface: wlan0} \
+| ${color1}IP:${color2} ${addr wlan0}
+    ${color1}ESSID:${color2} ${wireless_essid wlan0} \
+| ${color1}Quality:${color2} ${wireless_link_qual_perc wlan0}%
+    ${color1}Speed: Down: ${color2}${downspeedf wlan0} ${color1}| Up: ${color2}${upspeedf wlan0}
+${else}\
+${color1}Interface:${color2} wlan0 ${color1}down.
+${endif}\
+${else}\
+${endif}\
+###########################################################################
+${else}\
+${template3 State: Offline}
+${endif}\
+# EOF

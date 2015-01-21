@@ -1,9 +1,0 @@
-deb http://http.kali.org/kali kali main contrib non-free
-deb http://security.kali.org/kali-security kali/updates main contrib non-free
-deb http://ftp.us.debian.org/debian testing main contrib non-free
-deb-src http://ftp.us.debian.org/debian testing main contrib non-free
-deb http://ftp.debian.org/debian/ jessie-updates main contrib non-free
-deb-src http://ftp.debian.org/debian/ jessie-updates main contrib non-free
-deb http://security.debian.org/ jessie/updates main contrib non-free
-deb-src http://security.debian.org/ jessie/updates main contrib non-free
-
