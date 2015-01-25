@@ -55,6 +55,22 @@ function cleanup {
 	rm -rf kali-arm-build-scripts
 }
 
+function generateSha1sum {
+        echo "generating sha1sum"
+        sha1sum $1 > $1.sha1sum
+}
+
+function compressImage {
+        echo "compress image"
+        MACHINE_TYPE=`uname -m`
+        if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+                pixz ${nandImageName}-${version}.img ${nandImageName}-${version}.img.xz
+        else
+                echo "Don't pixz on 32bit, there isn't enough memory to compress the images."
+        fi
+}
+
+
 
 ##########################################################################################################
 # program
@@ -88,8 +104,10 @@ if [ ! -f ${rootfsdir}/rock_rootfs-${version}.img ]; then
 fi
 
 createNandImg
-
 cleanup
+generateSha1sum ${nandImageName}-${version}.img
+compressImage
+generateSha1sum ${nandImageName}-${version}.img.xz
 
 echo "The kali-nand-image is located at: "${rootfsdir}"/"${nandImageName}"-"${version}".img"
 

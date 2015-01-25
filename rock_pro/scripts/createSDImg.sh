@@ -99,6 +99,21 @@ function partitionSDImage {
 	echo -e "n\np\n1\n49152\n\nw" | fdisk ${sdImageName}-${version}.img
 }
 
+function generateSha1sum {
+	echo "generating sha1sum"
+	sha1sum $1 > $1.sha1sum
+}
+
+function compressImage {
+	echo "compress image"
+	MACHINE_TYPE=`uname -m`
+	if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+		pixz ${sdImageName}-${version}.img ${sdImageName}-${version}.img.xz
+	else
+		echo "Don't pixz on 32bit, there isn't enough memory to compress the images."
+	fi
+}
+
 function cleanup {
         cd ${rootfsdir}
         rm -rf kali-armhf
@@ -146,6 +161,9 @@ prepareRootfsToSD
 copyRootfs
 restoreRootfsToNand
 partitionSDImage
+generateSha1sum ${sdImageName}-${version}.img
+compressImage
+generateSha1sum ${sdImageName}-${version}.img.xz
 
 echo "The kali-sdcard-image is located at: "${rootfsdir}"/"${sdImageName}"-"${version}".img"
 
