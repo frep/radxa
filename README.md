@@ -13,6 +13,6 @@ ToDo's
 ------
  
 - [x] rock_pro: use the rabian kernel instead of the older ubuntu-Kernel
-- [ ] rock: use the rabian kernel instead of the older ubuntu-Kernel
+- [x] rock: use the rabian kernel instead of the older ubuntu-Kernel
 - [ ] rootfs: Try to create a kali linux v2.0 (a.k.a kali sana) rootfs
 - [ ] rock2_square: RK3288-chip not supported yet. Try to get it running!
