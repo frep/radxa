@@ -1,0 +1,9 @@
+﻿# NAME		Relative path
+#
+#HWDEF		HWDEF
+package-file	package-file
+bootloader	rk_loader/RK3188Loader(L)_V2.19.bin
+#uboot		uboot.img
+parameter	parameter
+boot		boot/boot-linux.img
+linuxroot	rootfs.img
