@@ -1,0 +1,9 @@
+FIRMWARE_VER:1.0.0
+MACHINE_MODEL:rock2
+MACHINE_ID:007
+MANUFACTURER:RADXA
+MAGIC: 0x5041524B
+ATAG: 0x60000800
+MACHINE: 3288
+CHECK_MASK: 0x80
+CMDLINE:fbcon=vc:64-63 vmalloc=516M console=ttyFIQ0 console=tty0 init=/sbin/init root=/dev/mmcblk0p2 rootfstype=ext4 rw rootwait initrd=0x62000000,0x00800000 mtdparts=rk29xxnand:0x00010000@0x00016000(boot),-@0x00994000(linuxroot)
