@@ -29,7 +29,7 @@ function copyFiles()
 	cd $tempDir
 	cp package-file $targetDir
 	cp parameter $targetDir
-	cp boot/resource.img $targetDir
+	#cp boot/resource.img $targetDir
 	cp boot/boot-linux.img $targetDir
 	cd modules/lib
 	tar cvfz modules.tar.gz firmware/ modules/
