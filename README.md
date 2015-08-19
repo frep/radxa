@@ -6,6 +6,8 @@ workspace for [radxa](http://radxa.com/) devices, such as the radxa rock pro
 Kali Linux for radxa devices
 ----------------------------
 
+![kali Sana](https://github.com/frep/radxa/blob/master/pictures/kaliSana.png)
+
 This workspace provides all the needed stuff to build a kali linux for most radxa devices.
 A how to build is given in the readme in the setup-directory of the device (e.g. https://github.com/frep/radxa/blob/master/rock_pro/scripts/readme.md for the Radxa Rock Pro)
 
