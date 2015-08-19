@@ -42,15 +42,22 @@ kalidir=${imagedir}/kali-${version}
 # script will throw an error, but will still continue on, and create an unusable
 # image, keep that in mind.
 
-arm="abootimg cgpt fake-hwclock ntpdate vboot-utils vboot-kernel-utils uboot-mkimage"
-base="kali-menu kali-defaults initramfs-tools"
-desktop="xfce4 network-manager network-manager-gnome xserver-xorg-video-fbdev"
-tools="passing-the-hash winexe aircrack-ng hydra john sqlmap wireshark libnfc-bin mfoc"
-services="openssh-server apache2"
-extras="iceweasel wpasupplicant"
+arm="abootimg cgpt fake-hwclock ntpdate u-boot-tools vboot-utils vboot-kernel-utils"
+base="e2fsprogs initramfs-tools kali-defaults kali-menu parted sudo usbutils"
+desktop="fonts-croscore fonts-crosextra-caladea fonts-crosextra-carlito gnome-theme-kali gtk3-engines-xfce kali-desktop-xfce kali-root-login lightdm network-manager network-manager-gnome xfce4 xserver-xorg-video-fbdev"
+tools="aircrack-ng ethtool hydra john libnfc-bin mfoc nmap passing-the-hash sqlmap usbutils winexe wireshark"
+services="apache2 openssh-server"
+extras="iceweasel xfce4-terminal wpasupplicant"
 
 export packages="${arm} ${base} ${desktop} ${tools} ${services} ${extras}"
 export architecture="armhf"
+
+# If you have your own preferred mirrors, set them here.
+# You may want to leave security.kali.org alone, but if you trust your local
+# mirror, feel free to change this as well.
+# After generating the rootfs, we set the sources.list to the default settings.
+mirror=repo.kali.org
+security=security.kali.org
 
 # Set this to use an http proxy, like apt-cacher-ng, and uncomment further down
 # to unset it.
@@ -71,20 +78,22 @@ cd kali-arm-build-scripts
 
 cd ${kalidir}
 
-# Create the rootfs - not much to modify here, except maybe the hostname
-debootstrap --foreign --arch $architecture kali kali-$architecture http://http.kali.org/kali
+# create the rootfs - not much to modify here, except maybe the hostname.
+debootstrap --foreign --arch $architecture sana kali-$architecture http://$mirror/kali
 
 cp /usr/bin/qemu-arm-static kali-$architecture/usr/bin/
 
 LANG=C chroot kali-$architecture /debootstrap/debootstrap --second-stage
-cat > kali-$architecture/etc/apt/sources.list << "EOF"
-deb http://http.kali.org/kali kali main contrib non-free
-deb http://security.kali.org/kali-security kali/updates main contrib non-free
+cat << EOF > kali-$architecture/etc/apt/sources.list
+deb http://$mirror/kali sana main contrib non-free
+deb http://$security/kali-security sana/updates main contrib non-free
 EOF
 
+# Set hostname
 echo ${hostname} > kali-$architecture/etc/hostname
 
-cat > kali-$architecture/etc/hosts << "EOF"
+# So X doesn't complain, we add kali to hosts
+cat << EOF > kali-$architecture/etc/hosts
 127.0.0.1       kali    localhost
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
@@ -93,16 +102,16 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 EOF
 
-cat > kali-$architecture/etc/resolv.conf << "EOF"
-nameserver 8.8.8.8
-EOF
-
-cat > kali-$architecture/etc/network/interfaces << "EOF"
+cat << EOF > kali-$architecture/etc/network/interfaces
 auto lo
 iface lo inet loopback
 
 auto eth0
 iface eth0 inet dhcp
+EOF
+
+cat << EOF > kali-$architecture/etc/resolv.conf
+nameserver 8.8.8.8
 EOF
 
 export MALLOC_CHECK_=0 # workaround for LP: #520465
@@ -114,12 +123,12 @@ mount -t proc proc kali-$architecture/proc
 mount -o bind /dev/ kali-$architecture/dev/
 mount -o bind /dev/pts kali-$architecture/dev/pts
 
-cat << "EOF" > kali-$architecture/debconf.set
+cat << EOF > kali-$architecture/debconf.set
 console-common console-data/keymap/policy select Select keymap from full list
 console-common console-data/keymap/full select en-latin1-nodeadkeys
 EOF
 
-cat > kali-$architecture/third-stage << "EOF"
+cat << EOF > kali-$architecture/third-stage
 #!/bin/bash
 dpkg-divert --add --local --divert /usr/sbin/invoke-rc.d.chroot --rename /usr/sbin/invoke-rc.d
 cp /bin/true /usr/sbin/invoke-rc.d
@@ -132,12 +141,22 @@ apt-get -y install locales-all
 debconf-set-selections /debconf.set
 rm -f /debconf.set
 apt-get update
-apt-get -y install git-core binutils ca-certificates initramfs-tools uboot-mkimage
+apt-get -y install git-core binutils ca-certificates initramfs-tools u-boot-tools
 apt-get -y install locales console-common less nano git
 echo "root:toor" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
 rm -f /etc/udev/rules.d/70-persistent-net.rules
+export DEBIAN_FRONTEND=noninteractive
 apt-get --yes --force-yes install $packages
+apt-get --yes --force-yes dist-upgrade
+apt-get --yes --force-yes autoremove
+
+# Because copying in authorized_keys is hard for people to do, let's make the
+# image insecure and enable root login with a password.
+
+echo "Making the image insecure"
+sed -i -e 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+update-rc.d ssh enable
 
 rm -f /usr/sbin/policy-rc.d
 rm -f /usr/sbin/invoke-rc.d
@@ -150,7 +169,7 @@ chmod +x kali-$architecture/third-stage
 
 LANG=C chroot kali-$architecture /third-stage
 
-cat > kali-$architecture/cleanup << "EOF"
+cat << EOF > kali-$architecture/cleanup
 #!/bin/bash
 rm -rf /root/.bash_history
 apt-get update
@@ -162,6 +181,7 @@ rm -f /usr/bin/qemu*
 EOF
 
 chmod +x kali-$architecture/cleanup
+LANG=C chroot kali-$architecture /cleanup
 
 echo "Autostart services"
 update-rc.d ssh defaults
@@ -207,15 +227,6 @@ writeStartup()
         chmod +x /etc/rc.local
 }
 
-fixSshService()
-{
-	cat /etc/init.d/ssh | sed 's@^.*# Default-Stop:.*$@# Default-Stop:         0 1 6@' > tmpFile
-	mv tmpFile /etc/init.d/ssh
-	chmod +x /etc/init.d/ssh
-	update-rc.d -f ssh remove
-	update-rc.d ssh defaults
-}
-
 startup="firstBoot"
 imagetype="nand"
 autoStartX="false"
@@ -224,7 +235,6 @@ if [ ${imagetype} = "nand" ]; then
 fi
 
 if [ ${startup} = "firstBoot" ]; then
-	fixSshService
         if [ ${imagetype} = "nand" ]; then
                 resize2fs /dev/block/mtd/by-name/linuxroot;
                 writeStartup "startupDone"
@@ -253,29 +263,6 @@ exit 0
 EOF
 
 chmod +x kali-$architecture/etc/rc.local
-
-# add some repositories
-echo "deb http://ftp.us.debian.org/debian testing main contrib non-free" >> kali-$architecture/etc/apt/sources.list
-echo "deb-src http://ftp.us.debian.org/debian testing main contrib non-free" >> kali-$architecture/etc/apt/sources.list
-echo "deb http://ftp.debian.org/debian/ jessie-updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
-echo "deb-src http://ftp.debian.org/debian/ jessie-updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
-echo "deb http://security.debian.org/ jessie/updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
-echo "deb-src http://security.debian.org/ jessie/updates main contrib non-free" >> kali-$architecture/etc/apt/sources.list
-
-cat > kali-$architecture/etc/apt/preferences.d/main.pref << "EOF"
-Package: *
-Pin: release n=kali
-Pin-Priority: 350
-
-Package: *
-Pin: release n=kali-bleeding-edge
-Pin-Priority: 300
-
-Package: *
-Pin: release n=jessie
-Pin-Priority: 10
-EOF
-
 LANG=C chroot kali-$architecture /cleanup
 
 #umount kali-$architecture/proc/sys/fs/binfmt_misc
